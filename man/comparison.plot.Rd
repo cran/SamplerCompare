@@ -1,5 +1,5 @@
 % From SamplerCompare, (c) 2010 Madeleine Thompson
-% $Id: comparison.plot.Rd 1607 2010-09-11 15:45:13Z mthompson $
+% $Id: comparison.plot.Rd 2489 2011-02-12 22:11:13Z mthompson $
 
 \name{comparison.plot}
 
@@ -10,13 +10,15 @@
 \description{Generates a plot of representing results from
   \code{\link{compare.samplers}}.}
 
-\usage{comparison.plot(RS, xlab=NULL, ylab=NULL, ...)}
+\usage{comparison.plot(RS, xlab=NULL, ylab=NULL, base_size=10, ...)}
 
 \arguments{
   \item{RS}{A data frame in the form returned by
     \code{\link{compare.samplers}}}
   \item{xlab, ylab, ...}{Options to be passed to
     \code{\link[ggplot2]{qplot}}.}
+  \item{base_size}{The text base size passed to
+    \code{\link[ggplot2]{theme_bw}}}
 }
 
 \details{
@@ -61,6 +63,6 @@
 }
 
 \references{
-  Thompson, M. B. (2010). Graphical comparison of MCMC performance.
-  In preparation.
+  Thompson, M. B. (2010), Graphical comparison of MCMC performance,
+  University of Toronto Dept. of Statistics technical report no. 1010.
 }

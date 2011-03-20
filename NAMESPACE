@@ -1,10 +1,11 @@
 # From SamplerCompare, (c) 2010 Madeleine Thompson
-# $Id: NAMESPACE 1489 2010-08-25 22:10:48Z mthompson $
+# $Id: NAMESPACE 2774 2011-03-17 02:37:36Z mthompson $
 
 # misc.
 
 export(compare.samplers, make.dist, make.c.dist, comparison.plot, ics.act,
-       ar.act, chud, chdd, raw.symbol, wrap.c.sampler, check.dist.gradient)
+       ar.act, chud, chdd, raw.symbol, wrap.c.sampler, check.dist.gradient,
+       compounded.sampler, twonorm)
 S3method(print, dist)
 useDynLib(SamplerCompare, dchud, dchdd, raw_symbol, R_invoked_C_glue)
 
@@ -14,7 +15,9 @@ export(shrinking.rank.sample, nonadaptive.crumb.sample,
        stepout.slice.sample, interval.slice.sample, hyperrectangle.sample,
        nograd.hyperrectangle.sample, arms.sample, cov.match.sample,
        multivariate.metropolis.sample, univar.metropolis.sample,
-       adaptive.metropolis.sample)
+       adaptive.metropolis.sample, univar.eigen.sample,
+       cheat.univar.eigen.sample, oblique.hyperrect.sample,
+       cheat.oblique.hyperrect.sample)
        
 useDynLib(SamplerCompare, sampler_glue_R_dist, sampler_glue_C_dist)
 useDynLib(SamplerCompare, arms_sample, transition_sample)

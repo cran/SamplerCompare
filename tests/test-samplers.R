@@ -1,5 +1,5 @@
 # From SamplerCompare, (c) 2010 Madeleine Thompson
-# $Id: test-samplers.R 1519 2010-08-28 20:24:37Z mthompson $
+# $Id: test-samplers.R 2774 2011-03-17 02:37:36Z mthompson $
 
 # This script makes sure that all the samplers exported in NAMESPACE
 # can draw a 500-state sample from a simple 2D Gaussian implemented
@@ -16,7 +16,8 @@ all.samplers <- list(
   stepout.slice.sample, interval.slice.sample, hyperrectangle.sample,
   nograd.hyperrectangle.sample, arms.sample, cov.match.sample,
   multivariate.metropolis.sample, univar.metropolis.sample,
-  adaptive.metropolis.sample)
+  adaptive.metropolis.sample, univar.eigen.sample, cheat.univar.eigen.sample,
+  oblique.hyperrect.sample, cheat.oblique.hyperrect.sample)
 
 RS <- compare.samplers(500, list(N2weakcor.dist), all.samplers)
 stopifnot(max(RS$err)<1)
@@ -24,7 +25,7 @@ stopifnot(max(RS$err)<1)
 # A version of N2weakcor.dist implemented in C.
 
 N2weakcor.dist.C <- make.c.dist(2, 'Gauss2-C', 'Gauss2_log_dens',
-  c(N2weakcor.dist$mean, 0.8), mean=N2weakcor.dist$mean)
+  c(N2weakcor.dist$mean, 0.8), mean=N2weakcor.dist$mean, cov=N2weakcor.dist$cov)
 
 RS <- compare.samplers(500, list(N2weakcor.dist.C), all.samplers)
 stopifnot(max(RS$err)<1)

@@ -1,5 +1,5 @@
 % From SamplerCompare, (c) 2010 Madeleine Thompson
-% $Id: SamplerCompare-package.Rd 1627 2010-09-14 20:52:28Z mthompson $
+% $Id: SamplerCompare-package.Rd 2785 2011-03-20 19:55:13Z mthompson $
 
 \name{SamplerCompare-package}
 \alias{SamplerCompare-package}
@@ -14,10 +14,10 @@ the results of those simulations.  See sc-intro.pdf for an introduction.}
 \tabular{ll}{
 Package: \tab SamplerCompare\cr
 Type: \tab Package\cr
-Version: \tab 1.0.1\cr
-Date: \tab 2010-09-14\cr
+Version: \tab 1.1\cr
+Date: \tab 2011-03-20\cr
 License: \tab GPL-2\cr
-Copyright: \tab (c) 2010 Madeleine Thompson, except \file{dch*d.f} and \file{jss*.} \cr
+Copyright: \tab (c) 2010-2011 Madeleine Thompson, except \file{dch*d.f} and \file{jss*.} \cr
 LazyLoad: \tab yes\cr
 }
 

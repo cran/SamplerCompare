@@ -1,5 +1,5 @@
 % From SamplerCompare, (c) 2010 Madeleine Thompson
-% $Id: make.dist.Rd 1607 2010-09-11 15:45:13Z mthompson $
+% $Id: make.dist.Rd 2504 2011-02-14 15:57:04Z mthompson $
 
 \name{make.dist}
 
@@ -12,7 +12,8 @@
 
 \usage{make.dist(ndim, name, name.expression=NULL,
           log.density=NULL, grad.log.density=NULL,
-          log.density.and.grad=NULL, mean=NULL, cov=NULL)}
+          log.density.and.grad=NULL, mean=NULL, cov=NULL,
+          mean.log.dens=NULL)}
 
 \arguments{
   \item{ndim}{The size of the distribution's state space.}
@@ -33,6 +34,9 @@
     return value.}
   \item{mean}{A vector specifying the true mean of the distribution.}
   \item{cov}{A matrix specifying the true covariance of the distribution.}
+  \item{mean.log.dens}{A scalar specifying the true mean of the log
+    density of the distribution.  This will depend on the normalization
+    of the log density function.}
 }
 
 \details{
@@ -53,6 +57,11 @@
   compute them separately, \code{log.density.and.grad} will be
   synthesized from \code{log.density} and \code{grad.log.density}
   if necessary.
+
+  \code{mean}, \code{cov}, and \code{mean.log.dens} values are
+  intended to be used by diagnostic routines.  \code{mean} and
+  \code{mean.log.dens} are currently used by \code{\link{compare.samplers}}
+  when estimating autocorrelation times.
 
   See \code{\link{make.c.dist}} for a way to define distributions
   whose densities are implemented in C instead of R.

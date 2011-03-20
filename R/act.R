@@ -1,5 +1,5 @@
 # From SamplerCompare, (c) 2010 Madeleine Thompson
-# $Id: act.R 1525 2010-08-29 13:35:04Z mthompson $
+# $Id: act.R 1759 2010-10-10 20:58:39Z mthompson $
 
 # act.R contains functions related to the computation of the
 # autocorrelation time of a Markov chain.  See "Graphical Comparison
@@ -71,8 +71,8 @@ ar.act1  <- function(y) {
   # Compute ACT quantiles.
 
   act.sim[is.na(act.sim)] <- Inf
-  act.025 <- quantile(act.sim, 0.025)
-  act.975 <- quantile(act.sim, 0.975)
+  act.025 <- as.numeric(quantile(act.sim, 0.025))   # as.numeric to drop name
+  act.975 <- as.numeric(quantile(act.sim, 0.975))   # as.numeric to drop name
   se <- (act.975-act.025)/(2*1.96)
 
   return(list(act=act, se=se, act.025=act.025, act.975=act.975, order=A$order))

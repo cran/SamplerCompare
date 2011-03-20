@@ -1,5 +1,5 @@
 // From SamplerCompare, (c) 2010 Madeleine Thompson
-// $Id: sampler-glue.c 1615 2010-09-12 21:32:49Z mthompson $
+// $Id: sampler-glue.c 2185 2011-01-11 14:42:35Z mthompson $
 
 // sampler-glue.c contains functions related to the R/C interface
 // for samplers and distributions.  See the vignette "R/C Glue in
@@ -247,7 +247,7 @@ SEXP sampler_glue_C_dist(
   SET_VECTOR_ELT(result, 0, X);
   SET_VECTOR_ELT(result, 1, ScalarInteger(stub_context.evals));
   SET_VECTOR_ELT(result, 2, ScalarInteger(stub_context.grads));
-  UNPROTECT(2);
+  UNPROTECT(3);
   return result;
 }
 

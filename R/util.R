@@ -1,5 +1,5 @@
 # From SamplerCompare, (c) 2010 Madeleine Thompson
-# $Id: util.R 1494 2010-08-26 13:30:40Z mthompson $
+# $Id: util.R 2528 2011-02-17 21:31:12Z mthompson $
 
 # util.R is a place where assorted utility functions find a home.
 
@@ -18,5 +18,12 @@ rsphere <- function(n,p) {
 
 logsumexp <- function(x) {
   m <- max(x)
+  if (is.na(m) || m==-Inf)
+    return(m)
   return(m+log(sum(exp(x-m))))
 }
+
+# Returns the two-norm of the argument vector.  Another function I
+# use all the time.
+
+twonorm <- function(x) sqrt(sum(x^2))

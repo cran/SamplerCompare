@@ -1,16 +1,18 @@
-% From SamplerCompare, (c) 2010 Madeleine Thompson
-% $Id: sc-intro.Rnw 1618 2010-09-13 20:27:47Z mthompson $
+% From SamplerCompare, (c) 2010-2011 Madeleine Thompson
+% $Id: sc-intro.Rnw 2791 2011-03-21 14:39:03Z mthompson $
 
 %\VignetteIndexEntry{Introduction to SamplerCompare}
 
 \documentclass[nojss,article]{jss}
+%\documentclass[article]{jss}
 %\usepackage{Sweave}
 \usepackage{fancyvrb}
   \DefineShortVerb{\|}
 \usepackage{array}
+\usepackage{verbatim}
 
 \def\svndate$#1: #2-#3-#4 #5 #6 (#7) ${\def\fmtdate{#2--#3--#4}}
-\svndate$Date: 2010-09-13 16:27:47 -0400 (Mon, 13 Sep 2010) $
+\svndate$Date: 2011-03-21 10:39:03 -0400 (Mon, 21 Mar 2011) $
 
 \title{Introduction to \pkg{SamplerCompare}}
 \author{Madeleine B. Thompson\\University of Toronto}
@@ -19,7 +21,7 @@
 
 \Abstract{
   \pkg{SamplerCompare} is an \proglang{R} package for comparing the
-  performance of Markov Chain Monte Carlo samplers.  It samples from
+  performance of Markov chain Monte Carlo samplers.  It samples from
   a collection of distributions with a collection of MCMC methods
   over a range of tuning parameters.  Then, using log density evaluations
   per independent observation as a figure of merit, it generates a
@@ -52,36 +54,51 @@
 
 \begin{document}
 
+<<echo=FALSE, results=hide>>=
+capture.output(source('ex-compare-samplers.Rfrag'),
+  file='ex-compare-samplers.txt')
+
+pdf('ex-comparison-plot.pdf', height=6, width=6)
+print(comparison.plot(sim.results))
+dev.off()
+
+source('ex-metropolis.Rfrag')
+source('ex-beta.Rfrag')
+source('ex-final.Rfrag')
+capture.output(source('ex-final-compare.Rfrag'),
+  file='ex-final-compare.txt')
+@
+
 \section{Purpose of package}
 
-\pkg{SamplerCompare} is an \proglang{R} package that allows for automated comparison
-of MCMC methods.  It samples from collections of probability
-distributions with collections of Markov Chain Monte Carlo samplers
-with a range of tuning parameters and presents the results of such
-simulations graphically.  These comparisons allow researchers to
-better understand which MCMC methods perform best in which
-circumstances.
+\pkg{SamplerCompare} \citep{samplercompare} is an \proglang{R}
+\citep{r} package that allows for automated comparison of Markov
+chain Monte Carlo (MCMC) methods.  It samples from collections of
+probability distributions with collections of MCMC samplers with a
+range of tuning parameters and presents the results of such simulations
+graphically.  These comparisons allow researchers to better understand
+which MCMC methods perform best in which circumstances.
 
 This document introduces the mechanics of using the \pkg{SamplerCompare}
 package.  For the mathematical background of the comparisons and
-analysis of the resulting graphics, see \citet{thompson10b}.
-Other sources of information on \pkg{SamplerCompare} are the \proglang{R} online
-help and the vignette ``R/C Glue in SamplerCompare.''  A list of
-online help topics and vignettes can be found by typing:
+analysis of the resulting graphics, see \citet{corlen}.  Other
+sources of information on \pkg{SamplerCompare} are the \proglang{R}
+online help for the package and \citet{rcglue}.  A list of online
+help topics and vignettes can be found by typing:
 \begin{verbatim}
-> library(help='SamplerCompare')
+R> library(help='SamplerCompare')
 \end{verbatim}
 Vignettes can be read with the |vignette| command.  For example:
 \begin{verbatim}
-> vignette('glue')
+R> vignette('glue')
 \end{verbatim}
 PDF copies can be found in the |doc| directory of the
 installed package.
 
 \section{Running MCMC simulations}
 
-\begin{figure}
-\begin{tabular}{>{\tt}lp{3.5in}}
+\begin{table}[p]
+\begin{tabular}{>{\tt}lp{3.40in}}
 \rm \proglang{R} function & Sampler \\ \hline
 multivariate.metropolis.sample & Metropolis--Hastings with spherically
   symmetric Gaussian proposals \\
@@ -92,11 +109,15 @@ arms.sample & Adaptive Rejection Metropolis \citep{gilks95} \\
 stepout.slice.sample & slice sampler with stepping out \citep[\S4]{neal03} \\
 interval.slice.sample & slice sampler without stepping out
   \citep[\S4]{neal03} \\
+univar.eigen.sample & adaptive slice sampler with univariate steps
+  along eigenvectors of covariance matrix \citep[ch.~3]{thompson-thesis} \\
 hyperrectangle.sample & slice sampler with hypercube for initial
   slice approximation, shrinkage using gradient \citep[\S5.1]{neal03} \\
 nograd.hyperrectangle.sample & slice sampler with hypercube for
   initial slice approximation, shrinkage in all dimensions
   \citep[\S5.1]{neal03} \\
+oblique.hyperrect.sample & adaptive slice sampler with hyperrectangle
+  for initial slice approximation \citep[ch.~3]{thompson-thesis} \\
 nonadaptive.crumb.sample & slice sampler with Gaussian crumbs
   \citep[\S5.2]{neal03} \\
 cov.match.sample & covariance-matching slice sampler \citep[\S4]{thompson10} \\
@@ -106,9 +127,9 @@ shrinking.rank.sample & shrinking rank slice sampler \citep[\S5]{thompson10} \\
 sampler's \proglang{R} function for more information on an individual
 method.}
 \label{samplers}
-\end{figure}
+\end{table}
 
-\begin{figure}
+\begin{table}[p]
 \begin{tabular}{>{\tt}lp{4in}}
 \rm \proglang{R} symbol & Distribution \\ \hline
 N2weakcor.dist & weakly correlated two-dimensional Gaussian \\
@@ -129,7 +150,7 @@ make.mv.gamma.dist & distributions with uncorrelated gamma marginals \\
 distributions; see the \proglang{R} help for a symbol for more
 information on an individual distribution or generator.}
 \label{dists}
-\end{figure}
+\end{table}
 
 The three central types of objects in \pkg{SamplerCompare} are distributions (which
 have the class |dist|), sampler functions, and simulation results.
@@ -137,46 +158,52 @@ The function |compare.samplers| runs a list of samplers on a list
 of distributions with a set of tuning parameters and returns a data
 frame containing simulation results.  Sampler functions are assumed
 to have a single scalar tuning parameter.  If they have more, wrapper
-functions can be used to represent a single sampler with a varying
+functions can represent a single sampler with a varying
 tuning parameter as multiple samplers.  \pkg{SamplerCompare} comes with
-a collection of predefined samplers (listed in figure~\ref{samplers})
-and distributions (listed in figure~\ref{dists}).
+a collection of predefined samplers (listed in table~\ref{samplers})
+and distributions (listed in table~\ref{dists}).
 
 Suppose we would like to compare Adaptive Metropolis
 (|adaptive.metropolis.sample|) and Adaptive Rejection Metropolis
 (|arms.sample|) with the tuning parameters 1, 20, and 400 on
 two-dimensional Gaussian (|make.gaussian|) and Gamma (|make.mv.gamma.dist|)
 distributions.  We can do this with |compare.samplers| using the
-code:
-<<echo=TRUE>>=
-library(SamplerCompare)
-gauss.cor7 <- make.gaussian(mean=c(1,2), rho=0.7)
-gamma.shape23 <- make.mv.gamma.dist(shape=c(2,3))
-sim.results <- compare.samplers(sample.size=1000,
-                                dists=list(gauss.cor7, gamma.shape23),
-                                samplers=list(adaptive.metropolis.sample,
-                                              arms.sample),
-                                tuning=c(1,20,400))
-@
+\proglang{R} code:
+\verbatiminput{ex-compare-samplers.Rfrag}
 
-\noindent Each line in the trace output has the distribution name,
-the sampler name, the number of evaluations per independent observation
-with 95\% confidence interval in parentheses, and the tuning
-parameter.
+The call to |compare.samplers| generates the following trace, with
+one line for each simulation:
+\verbatiminput{ex-compare-samplers.txt}
+Each line in the trace has the distribution name, the sampler name,
+the number of evaluations per independent observation with 95\%
+confidence interval in parentheses, and the tuning parameter.
+
+\newpage
 
 \section{Visualizing results}
+\label{visualizing}
 
 To visualize the results from a simulation, one can use the
-|comparison.plot| function.  It has a single required argument,
-a data frame containing results from |compare.samplers|,
-and returns a \pkg{ggplot2} plot object.  One can call |print| on this
-object to view the plot; it can also be edited with the \pkg{grid}
-package.  To plot the results from the previous example, one would
-type:
-\setkeys{Gin}{width=3in,height=3in}
-<<fig=TRUE,height=6,width=6>>=
-print(comparison.plot(sim.results))
-@
+|comparison.plot| function.  It has a single required argument, a
+data frame containing results from |compare.samplers|, and returns
+a \pkg{ggplot2} \citep{wickham09} plot object.  One can call |print|
+on this object to view the plot; it can also be edited with the
+\pkg{grid} package \citep[ch.~5--6]{murrell05}.  To plot the results
+from the previous example, one would type:
+\begin{verbatim}
+R> print(comparison.plot(sim.results))
+\end{verbatim}
+The results are shown in figure~\ref{ex-comparison-plot}.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=3in,height=3in]{ex-comparison-plot.pdf}
+\end{center}
+\caption{A comparison between adaptive Metropolis and ARMS on
+two-dimensional Gaussians and gammas.  See section~\ref{visualizing}
+for more information.}
+\label{ex-comparison-plot}
+\end{figure}
 
 \noindent In this graphic, the columns of plots represent the
 samplers and the rows of plots represent the distributions.  The
@@ -208,37 +235,17 @@ element, indicating the number of times it did this.
 
 The following code specifies a Metropolis sampler with multivariate
 proposals:
-<<>>=
-metropolis.sample <- function(target.dist, x0, sample.size, tuning) {
-  X <- matrix(nrow=sample.size, ncol=target.dist$ndim)
-  state <- x0
-  evals <- 1
-  state.log.dens <- target.dist$log.density(state)
-  for (obs in 1:sample.size) {
-    proposal <- rnorm(target.dist$ndim, state, tuning)
-    evals <- evals + 1
-    proposal.log.dens <- target.dist$log.density(proposal)
-    if (runif(1) < exp(proposal.log.dens-state.log.dens)) {
-      state <- proposal
-      state.log.dens <- proposal.log.dens
-    }
-    X[obs,] <- state
-  }
-  return(list(X=X, evals=evals))
-}
-attr(metropolis.sample, 'name') <- 'Metropolis'
-@
+\verbatiminput{ex-metropolis.Rfrag}
 
 See the \proglang{R} help for |compare.samplers| for more information
 on writing samplers in \proglang{R}.  See the \proglang{R} help for
-|wrap.c.sampler| and the vignette ``R/C Glue in SamplerCompare''
+|wrap.c.sampler| and \citet{rcglue}
 for more information on writing samplers in \proglang{C}.
 
 \section{Defining additional distributions}
 
 |make.dist| can be used to specify a distribution whose log density
-is expressed in \proglang{R}.  (See the \proglang{R} help for |make.c.dist| and the
-vignette ``R/C Glue in SamplerCompare'' for more information on
+is expressed in \proglang{R}.  (See the \proglang{R} help for |make.c.dist| and \citet{rcglue} for more information on
 specifying distributions in \proglang{C}.)  Its 
 most important arguments are |ndim|, |name|, and |log.density|.  |ndim|
 specifies the dimension of the distribution and |name| names the
@@ -247,13 +254,8 @@ of length |ndim| that returns the log density at that point; it
 should return |-Inf| if the point is outside the support of the distribution.
 The log density does not need to be normalized.
 
-The following code defines a Beta(2,3) distribution:
-<<>>=
-
-beta23.log.dens <- function(x) ifelse(x<0 | x>1, -Inf, log(x) + 2*log(1-x))
-beta23.dist <- make.dist(ndim=1, name='Beta(2,3)',
-                         log.density=beta23.log.dens, mean=2/(2+3))
-@
+The following \proglang{R} code defines a Beta(2,3) distribution:
+\verbatiminput{ex-beta.Rfrag}
 The optional |mean| argument to |make.dist| makes the autocorrelation
 time computation in |compare.samplers| more accurate, so it is advisable
 to specify it when the mean is known.
@@ -261,26 +263,24 @@ to specify it when the mean is known.
 \section{A final example}
 
 Samplers and distributions defined as above can be used directly:
-<<>>=
-sim <- metropolis.sample(beta23.dist, x0=0.5, sample.size=100, tuning=1)
-summary(sim$X)
-@
+\verbatiminput{ex-final.Rfrag}
 Or, they can be passed to |compare.samplers|:
-<<>>=
-sim.results <- compare.samplers(sample.size=100,
-                                dists=list(beta23.dist),
-                                samplers=list(metropolis.sample),
-                                tuning=c(0.1,1))
-@
-Note the large confidence intervals for the evaluations per independent
-observation; this is a sign that a larger |sample.size| should be
-used.
+\verbatiminput{ex-final-compare.Rfrag}
+The call to |print(subset(...))| shows some of the columns of the
+result object:
+\verbatiminput{ex-final-compare.txt}
+One can see that since the evaluations per iteration (|evals|) and
+processor-seconds per iteration (|cpu|) are similar for each
+simulation, and the autocorrelation time (|act|) is lowest for a
+tuning parameter of $1.0$, that choice would seem to be better than
+the other two.  However, the plots produced by |comparison.plot|
+are easier to interpret when more than a few chains are run.
 
 \section{Limitations}
 
-\pkg{SamplerCompare} was created to support my own research; I am publishing
-it with the hope that others find it useful.  Some current limitations
-include:
+\pkg{SamplerCompare} was created to support my own research; I am
+releasing it with the hope that others find it useful.  Some current
+limitations include:
 \begin{itemize}
 \item Distributions are assumed to be continuous and to be of a
   constant dimension.
@@ -288,9 +288,6 @@ include:
 \item Samplers are assumed to have exactly one scalar tuning parameter.
 \item All samplers in a given invocation of |compare.samplers| are
   run with the same simulation length and set of tuning parameters.
-\item There is no explicit support for multithreading.  (This, and
-  the previous limitation, can be worked around manually by using
-  |rbind| on the results of multiple calls to |compare.samplers|.)
 \item Distributions are defined entirely in terms of their log
   density; there is no way to specify that a distribution is
   unimodal or that a particular parameter is always positive.

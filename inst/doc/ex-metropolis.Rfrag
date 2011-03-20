@@ -1,0 +1,18 @@
+metropolis.sample <- function(target.dist, x0, sample.size, tuning) {
+  X <- matrix(nrow=sample.size, ncol=target.dist$ndim)
+  state <- x0
+  evals <- 1
+  state.log.dens <- target.dist$log.density(state)
+  for (obs in 1:sample.size) {
+    proposal <- rnorm(target.dist$ndim, state, tuning)
+    evals <- evals + 1
+    proposal.log.dens <- target.dist$log.density(proposal)
+    if (runif(1) < exp(proposal.log.dens-state.log.dens)) {
+      state <- proposal
+      state.log.dens <- proposal.log.dens
+    }
+    X[obs,] <- state
+  }
+  return(list(X=X, evals=evals))
+}
+attr(metropolis.sample, 'name') <- 'Metropolis'

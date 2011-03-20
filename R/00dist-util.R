@@ -1,5 +1,5 @@
 # From SamplerCompare, (c) 2010 Madeleine Thompson
-# $Id: dist-util.R 1494 2010-08-26 13:30:40Z mthompson $
+# $Id: 00dist-util.R 2520 2011-02-16 22:32:16Z mthompson $
 
 # This file contains code for managing objects of the "dist" class,
 # which represent probability distributions in the SamplerCompare
@@ -10,7 +10,8 @@
 
 make.dist <- function(ndim, name, name.expression=NULL,
                       log.density=NULL, grad.log.density=NULL,
-                      log.density.and.grad=NULL, mean=NULL, cov=NULL) {
+                      log.density.and.grad=NULL, mean=NULL, cov=NULL,
+                      mean.log.dens=NULL) {
   stopifnot(ndim>0)
   if (!is.null(mean))
     stopifnot(length(mean)==ndim)
@@ -21,7 +22,8 @@ make.dist <- function(ndim, name, name.expression=NULL,
 
   ds <- list(ndim=ndim, name=name, name.expression=name.expression,
              log.density=log.density, grad.log.density=grad.log.density,
-             log.density.and.grad=log.density.and.grad, mean=mean, cov=cov)
+             log.density.and.grad=log.density.and.grad, mean=mean, cov=cov,
+             mean.log.dens=mean.log.dens)
 
   # If the user gave us log.density.and.grad but not log.density,
   # fake up a log.density.
@@ -38,13 +40,14 @@ make.dist <- function(ndim, name, name.expression=NULL,
       function(x) log.density.and.grad(x,TRUE)$grad.log.density
   }
 
-  # If the user gave us log.density and grad.log.density but not
-  # log.density.and.grad, fake up a log.density.and.grad.
+  # If the user gave us log.density but not log.density.and.grad,
+  # fake up a log.density.and.grad.  This will fail if compute.grad
+  # is TRUE and grad.log.density was unspecified.
 
-  if (is.null(log.density.and.grad) && !is.null(log.density) &&
-      !is.null(grad.log.density)) {
+  if (is.null(log.density.and.grad) && !is.null(log.density)) {
     ds$log.density.and.grad <- function(x, compute.grad=FALSE) {
       if (compute.grad) {
+        stopifnot(!is.null(ds$grad.log.density))
         return(list(log.density=ds$log.density(x),
                     grad.log.density=ds$grad.log.density(x)))
       } else {
@@ -133,21 +136,76 @@ check.dist.gradient <- function(ds, x, h=1e-7) {
   stopifnot(all(is.finite(g)))
   stopifnot(length(g)==length(x))
 
-  for (i in 1:length(x)) {
+  # Check each coordinate.
 
-    # Check analytic gradient against numerical derivative in dimension i.
+  for (i in 1:length(x))
+    check.discrete.gradient(ds$log.density, x, g, i, h)
+}
 
-    e <- c(rep(0,i-1),1,rep(0,length(x)-i))               # element vector
-    g.discrete <- (ds$log.density(x+e*h*x[i]) - ds$log.density(x-e*h*x[i])) /
-      2 / h / x[i]  # approximation
-    stopifnot(all(is.finite(g.discrete)))
+# Check analytic gradient of f, x.df, against numerical derivative
+# in dimension i at point x.
 
-    # If relative error is more than 0.001, fail.
+check.discrete.gradient <- function(f, x, g, i, h) {
 
-    if(abs( (g.discrete-g[i])/g[i] ) > 1e-3) {
-      stop("Gradients do not match.\n",
-           sprintf("g[%d] = %.5g   g.discrete[%d] = %.5g\n",
-                   i, g[i], i, g.discrete))
-    }
+  # element vector
+
+  e <- c(rep(0,i-1),1,rep(0,length(x)-i))
+
+  # approximation
+
+  g.discrete <- (f(x+e*h*x[i]) - f(x-e*h*x[i])) / 2 / h / x[i]
+  stopifnot(is.finite(g.discrete))
+
+  # If relative error is more than 0.001, fail.
+
+  if((g[i]==0 && abs(g.discrete) > 1e-8) ||
+     (g[i]!=0 && abs( (g.discrete-g[i])/g[i] ) > 1e-3)) {
+    stop("Gradients do not match.\n",
+         sprintf("analytic grad[%d] = %.5g   discrete grad[%d] = %.5g\n",
+                 i, g[i], i, g.discrete))
   }
+}
+
+# Turn a list of step functions into a sampler function.
+
+compounded.sampler <- function(step.functions, name, name.expr=NULL) {
+  sampler <- function(target.dist, x0, sample.size, limit=NULL, ...) {
+    # Initialization
+
+    X <- array(NA,c(sample.size,length(x0)))
+    step <- list(x=x0, y=target.dist$log.density(x0))
+    grads <- 0
+    evals <- 1
+
+    # Loop that generates sample.size observations from target distribution
+
+    for (obs in 1:sample.size) {
+      
+      # Take one step with each method.
+
+      for (s in 1:length(step.functions)) {
+        step <- step.functions[[s]](target.dist, step$x, step$y, ...)
+        evals <- evals + step$evals
+        grads <- grads + step$grads
+      }
+
+      # Store accepted observation and check to make sure the procedure
+      # has not been running too long.
+
+      X[obs,] <- step$x
+
+      if (!is.null(limit) && evals > limit * sample.size) {
+        X <- X[1:obs,]
+        break
+      }
+    }
+    return(list(X=X, evals=evals, grads=grads))
+  }
+
+  # Fill in attributes of sampler and return it.
+
+  attr(sampler, 'name') <- name
+  if (!is.null(name.expr))
+    attr(sampler, 'name.expr') <- name.expr
+  return(sampler)
 }

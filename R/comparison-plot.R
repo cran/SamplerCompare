@@ -1,11 +1,11 @@
 # From SamplerCompare, (c) 2010 Madeleine Thompson
-# $Id: comparison-plot.R 1525 2010-08-29 13:35:04Z mthompson $
+# $Id: comparison-plot.R 2465 2011-02-11 15:42:50Z mthompson $
 
 # comparison.plot generates a plot comparing MCMC performance as
 # described in "Graphical Comparison of MCMC Performance" (forthcoming).
 # See ?comparison.plot for usage details.
 
-comparison.plot <- function(RS, xlab=NULL, ylab=NULL, ...) {
+comparison.plot <- function(RS, xlab=NULL, ylab=NULL, base_size=10, ...) {
   stopifnot(require(ggplot2))
 
   # First, plot the results with finite ACT.
@@ -21,7 +21,7 @@ comparison.plot <- function(RS, xlab=NULL, ylab=NULL, ...) {
   if (is.null(xlab))
     xlab <- 'scale tuning parameter'
   if (is.null(ylab))
-    ylab <- 'log density evals. per indep. obs. (with 95% CI)'
+    ylab <- 'log density evals. per uncorrelated obs. (with 95% CI)'
 
   # Generate grid of plots of evals*act vs. tuning parameter, with
   # a 95% confidence interval.  The theme and x scale overrides are
@@ -32,8 +32,8 @@ comparison.plot <- function(RS, xlab=NULL, ylab=NULL, ...) {
   p <- qplot(tuning, evals*act, ymin=evals*act.025, ymax=evals*act.975,
       data=RSfinite, log='xy', geom='pointrange', xlab=xlab, ylab=ylab, ...) +
     facet_grid(dist.expr~sampler.expr, labeller=label_parsed) +
-    theme_bw() +
     scale_x_log(breaks=x.breaks, labels=x.breaks) +
+    theme_bw(base_size=base_size) +
     opts(panel.grid.minor=theme_blank(),
          axis.text.x=theme_text(angle=45, vjust=1))
 

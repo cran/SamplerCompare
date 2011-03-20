@@ -1,5 +1,5 @@
 # From SamplerCompare, (c) 2010 Madeleine Thompson
-# $Id: distributions.R 1494 2010-08-26 13:30:40Z mthompson $
+# $Id: distributions.R 2693 2011-03-11 03:09:59Z mthompson $
 
 # distributions.R contains example distributions and functions for
 # generating example distributions.
@@ -45,6 +45,8 @@ make.gaussian <- function(mean, sigma=NULL, rho=NULL) {
     as.vector(-sigma.inv %*% array(x-mean, c(ndim,1)))
   }
 
+  mean.log.dens <- log.density(mean) - 0.5 * ndim
+
   # Define name and name.expression.
 
   if (is.null(rho)) {
@@ -58,7 +60,8 @@ make.gaussian <- function(mean, sigma=NULL, rho=NULL) {
   # Call make.dist with the functions we have defined.
 
   ds <- make.dist(ndim, name, name.expression, log.density,
-                  grad.log.density, mean=mean, cov=sigma)
+                  grad.log.density, mean=mean, cov=sigma,
+                  mean.log.dens=mean.log.dens)
 }
 
 # Define some Gaussians I use repeatedly.
@@ -145,10 +148,17 @@ schools.dist <- (function() {
     c(16.11171,2.23727,22.21,10.7545,9.09,11.139,5.04,8.34,47.23,15.378),
     c(18.79947,0.47433,14.31,12.7219,14.03,16.373,8.93,12.20,15.38,62.346))
 
+  # From a simulation of length 300k from double.sample.
+  # 95% CI: (-16.8,-16.3)
+
+  mean.log.dens <- -16.5
+
   # Call make.dist to glue the parts together.
 
-  return(make.dist(10, '8-schools', NULL, log.density, grad.log.density,
-                   mean=schools.mean, cov=schools.cov))
+  return(make.dist(10, '8-schools', 'plain("Eight Schools")',
+                   log.density, grad.log.density,
+                   mean=schools.mean, cov=schools.cov,
+		   mean.log.dens=mean.log.dens))
 })()
 
 
