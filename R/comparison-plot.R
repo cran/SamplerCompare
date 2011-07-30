@@ -1,5 +1,5 @@
 # From SamplerCompare, (c) 2010 Madeleine Thompson
-# $Id: comparison-plot.R 2465 2011-02-11 15:42:50Z mthompson $
+# $Id: comparison-plot.R 3045 2011-04-23 03:03:14Z mthompson $
 
 # comparison.plot generates a plot comparing MCMC performance as
 # described in "Graphical Comparison of MCMC Performance" (forthcoming).
@@ -21,7 +21,8 @@ comparison.plot <- function(RS, xlab=NULL, ylab=NULL, base_size=10, ...) {
   if (is.null(xlab))
     xlab <- 'scale tuning parameter'
   if (is.null(ylab))
-    ylab <- 'log density evals. per uncorrelated obs. (with 95% CI)'
+    ylab <- paste('# of evals. of log density function per',
+                  'uncorrelated obs. (with 95% CI)')
 
   # Generate grid of plots of evals*act vs. tuning parameter, with
   # a 95% confidence interval.  The theme and x scale overrides are

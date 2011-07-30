@@ -1,5 +1,5 @@
 # From SamplerCompare, (c) 2010 Madeleine Thompson
-# $Id: distributions.R 2693 2011-03-11 03:09:59Z mthompson $
+# $Id: distributions.R 2996 2011-04-10 13:01:07Z mthompson $
 
 # distributions.R contains example distributions and functions for
 # generating example distributions.
@@ -45,6 +45,10 @@ make.gaussian <- function(mean, sigma=NULL, rho=NULL) {
     as.vector(-sigma.inv %*% array(x-mean, c(ndim,1)))
   }
 
+  # overdispersed initial point
+
+  initial <- function() as.numeric(rmvnorm(1, mean, 25/sqrt(ndim)*sigma))
+
   mean.log.dens <- log.density(mean) - 0.5 * ndim
 
   # Define name and name.expression.
@@ -60,7 +64,7 @@ make.gaussian <- function(mean, sigma=NULL, rho=NULL) {
   # Call make.dist with the functions we have defined.
 
   ds <- make.dist(ndim, name, name.expression, log.density,
-                  grad.log.density, mean=mean, cov=sigma,
+                  grad.log.density, initial=initial, mean=mean, cov=sigma,
                   mean.log.dens=mean.log.dens)
 }
 

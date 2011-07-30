@@ -1,5 +1,5 @@
 # From SamplerCompare, (c) 2010 Madeleine Thompson
-# $Id: 00dist-util.R 2520 2011-02-16 22:32:16Z mthompson $
+# $Id: 00dist-util.R 2995 2011-04-10 12:48:59Z mthompson $
 
 # This file contains code for managing objects of the "dist" class,
 # which represent probability distributions in the SamplerCompare
@@ -10,20 +10,24 @@
 
 make.dist <- function(ndim, name, name.expression=NULL,
                       log.density=NULL, grad.log.density=NULL,
-                      log.density.and.grad=NULL, mean=NULL, cov=NULL,
-                      mean.log.dens=NULL) {
+                      log.density.and.grad=NULL, initial=NULL,
+                      mean=NULL, cov=NULL, mean.log.dens=NULL) {
   stopifnot(ndim>0)
   if (!is.null(mean))
     stopifnot(length(mean)==ndim)
   if (!is.null(cov))
     stopifnot(all(dim(cov)==ndim))
+  stopifnot(is.null(log.density) || is.function(log.density))
+  stopifnot(is.null(grad.log.density) || is.function(grad.log.density))
+  stopifnot(is.null(log.density.and.grad) || is.function(log.density.and.grad))
+  stopifnot(is.null(initial) || is.function(initial))
 
   # Define a dist object as a list, filling in whatever the user gave us.
 
   ds <- list(ndim=ndim, name=name, name.expression=name.expression,
              log.density=log.density, grad.log.density=grad.log.density,
-             log.density.and.grad=log.density.and.grad, mean=mean, cov=cov,
-             mean.log.dens=mean.log.dens)
+             log.density.and.grad=log.density.and.grad, initial=initial,
+             mean=mean, cov=cov, mean.log.dens=mean.log.dens)
 
   # If the user gave us log.density.and.grad but not log.density,
   # fake up a log.density.

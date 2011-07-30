@@ -1,0 +1,6 @@
+s <- subset(sampler.comparison,
+  sampler=='Adaptive Metropolis' &
+  dist=='N2,rho=0.7' &
+  tuning==1)
+print( s$act * s$evals )
+print( s$act * s$cpu )

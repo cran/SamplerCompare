@@ -1,11 +1,11 @@
 # From SamplerCompare, (c) 2010 Madeleine Thompson
-# $Id: NAMESPACE 2774 2011-03-17 02:37:36Z mthompson $
+# $Id: NAMESPACE 3013 2011-04-11 18:46:47Z mthompson $
 
 # misc.
 
 export(compare.samplers, make.dist, make.c.dist, comparison.plot, ics.act,
        ar.act, chud, chdd, raw.symbol, wrap.c.sampler, check.dist.gradient,
-       compounded.sampler, twonorm)
+       compounded.sampler, twonorm, simulation.result)
 S3method(print, dist)
 useDynLib(SamplerCompare, dchud, dchdd, raw_symbol, R_invoked_C_glue)
 

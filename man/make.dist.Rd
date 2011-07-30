@@ -1,5 +1,5 @@
 % From SamplerCompare, (c) 2010 Madeleine Thompson
-% $Id: make.dist.Rd 2504 2011-02-14 15:57:04Z mthompson $
+% $Id: make.dist.Rd 2995 2011-04-10 12:48:59Z mthompson $
 
 \name{make.dist}
 
@@ -12,8 +12,8 @@
 
 \usage{make.dist(ndim, name, name.expression=NULL,
           log.density=NULL, grad.log.density=NULL,
-          log.density.and.grad=NULL, mean=NULL, cov=NULL,
-          mean.log.dens=NULL)}
+          log.density.and.grad=NULL, initial=NULL,
+          mean=NULL, cov=NULL, mean.log.dens=NULL)}
 
 \arguments{
   \item{ndim}{The size of the distribution's state space.}
@@ -32,6 +32,10 @@
     indicates whether the caller wants the gradient; if not, this
     function may omit the \code{grad.log.density} element in the
     return value.}
+  \item{initial}{A function that returns an overdispersed initial
+    state for an MCMC simulation of this distribution, used by
+    \code{\link{compare.samplers}}.  If unset, uniform draws on a
+    unit hypercube are assumed to be acceptable.}
   \item{mean}{A vector specifying the true mean of the distribution.}
   \item{cov}{A matrix specifying the true covariance of the distribution.}
   \item{mean.log.dens}{A scalar specifying the true mean of the log

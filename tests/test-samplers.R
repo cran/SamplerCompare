@@ -1,5 +1,5 @@
 # From SamplerCompare, (c) 2010 Madeleine Thompson
-# $Id: test-samplers.R 2774 2011-03-17 02:37:36Z mthompson $
+# $Id: test-samplers.R 2998 2011-04-10 18:07:51Z mthompson $
 
 # This script makes sure that all the samplers exported in NAMESPACE
 # can draw a 500-state sample from a simple 2D Gaussian implemented
@@ -19,7 +19,21 @@ all.samplers <- list(
   adaptive.metropolis.sample, univar.eigen.sample, cheat.univar.eigen.sample,
   oblique.hyperrect.sample, cheat.oblique.hyperrect.sample)
 
-RS <- compare.samplers(500, list(N2weakcor.dist), all.samplers)
+# Use a second core if multicore package is available.  In production,
+# we would only do this if we were on a multi-core system, but it's
+# better to lose some efficiency here and guarantee the code path is
+# tested.  If we wanted to know the actual number of cores, the best
+# way to find it is multicore:::detectCores().
+
+has.multicore <- suppressWarnings(require('multicore', quietly=TRUE))
+if (has.multicore) {
+  cores <- 2
+} else {
+  cores <- 1
+}
+
+RS <- compare.samplers(700, list(N2weakcor.dist), all.samplers,
+                       burn.in=0.7, cores=cores)
 stopifnot(max(RS$err)<1)
 
 # A version of N2weakcor.dist implemented in C.
@@ -27,5 +41,6 @@ stopifnot(max(RS$err)<1)
 N2weakcor.dist.C <- make.c.dist(2, 'Gauss2-C', 'Gauss2_log_dens',
   c(N2weakcor.dist$mean, 0.8), mean=N2weakcor.dist$mean, cov=N2weakcor.dist$cov)
 
-RS <- compare.samplers(500, list(N2weakcor.dist.C), all.samplers)
+RS <- compare.samplers(700, list(N2weakcor.dist.C), all.samplers,
+                       burn.in=0.7, cores=cores)
 stopifnot(max(RS$err)<1)

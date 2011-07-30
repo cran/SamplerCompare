@@ -1,5 +1,5 @@
 % From SamplerCompare, (c) 2010 Madeleine Thompson
-% $Id: comparison.plot.Rd 2489 2011-02-12 22:11:13Z mthompson $
+% $Id: comparison.plot.Rd 3019 2011-04-12 00:50:21Z mthompson $
 
 \name{comparison.plot}
 
@@ -14,7 +14,7 @@
 
 \arguments{
   \item{RS}{A data frame in the form returned by
-    \code{\link{compare.samplers}}}
+    \code{\link{compare.samplers}} and \code{\link{simulation.result}}.}
   \item{xlab, ylab, ...}{Options to be passed to
     \code{\link[ggplot2]{qplot}}.}
   \item{base_size}{The text base size passed to
@@ -58,6 +58,7 @@
 
 \seealso{
   \code{\link{compare.samplers}},
+  \code{\link{simulation.result}},
   \code{\link[ggplot2]{qplot}},
   \dQuote{Introduction to SamplerCompare} (vignette)
 }

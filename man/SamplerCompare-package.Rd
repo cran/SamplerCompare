@@ -1,5 +1,4 @@
-% From SamplerCompare, (c) 2010 Madeleine Thompson
-% $Id: SamplerCompare-package.Rd 2785 2011-03-20 19:55:13Z mthompson $
+% From SamplerCompare, (c) 2010-2011 Madeleine Thompson
 
 \name{SamplerCompare-package}
 \alias{SamplerCompare-package}
@@ -14,10 +13,10 @@ the results of those simulations.  See sc-intro.pdf for an introduction.}
 \tabular{ll}{
 Package: \tab SamplerCompare\cr
 Type: \tab Package\cr
-Version: \tab 1.1\cr
-Date: \tab 2011-03-20\cr
+Version: \tab 1.2\cr
+Date: \tab 2011-07-30\cr
 License: \tab GPL-2\cr
-Copyright: \tab (c) 2010-2011 Madeleine Thompson, except \file{dch*d.f} and \file{jss*.} \cr
+Copyright: \tab (c) 2010-2011 Madeleine Thompson, except \file{dch*d.f} and the JSS style files.\cr
 LazyLoad: \tab yes\cr
 }
 
@@ -28,7 +27,7 @@ passed to \code{\link{comparison.plot}}.
 
 The source files \file{src/dchud.f} and \file{src/dchdd.f} come from LINPACK.
 
-The files \file{inst/doc/jss*} come from the Journal of Statistical
+The JSS style files in \file{inst/doc/} come from the Journal of Statistical
 Software (\url{http://www.jstatsoft.org/style}).
 
 The rest of the package was written by Madeleine Thompson.

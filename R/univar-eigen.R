@@ -1,4 +1,4 @@
-# $Id: univar-eigen.R 2774 2011-03-17 02:37:36Z mthompson $
+# $Id: univar-eigen.R 2847 2011-03-28 18:32:23Z mthompson $
 
 # A slice sampler that samples along estimated eigenvectors of the
 # underlying distribution.
@@ -11,6 +11,7 @@ univar.eigen.sample <- function(target.dist, x0, sample.size,
   nevals <- 0
   beta <- 0.05 # as with Roberts & Rosenthal
   burn.in <- 1
+  nthin <- min(ndim, 25)
   
   # Eigendecomposition happens every decomp.freq univariate updates.
   # Never less than ten, and never such that it occurs more than a
@@ -33,17 +34,18 @@ univar.eigen.sample <- function(target.dist, x0, sample.size,
 
   obs.sum <- array(0, c(ndim, 1))
   obs.scatter <- array(0, c(ndim, ndim))
+  scatter.N <- 0
 
-  # Take sample.size*ndim univariate updates.
+  # Take sample.size*nthin univariate updates.
 
-  for (obs in 2:(sample.size*ndim)) {
+  for (obs in 2:(sample.size*nthin)) {
 
     # Every decomp.freq updates, update eigendecomposition if we're
     # still in the burn.in period (usually always) and we're not in
     # cheat mode.
 
-    if (!cheat && (obs %% decomp.freq) == 0 && obs<ndim*sample.size*burn.in) {
-      S.eig <- eigen(obs.scatter/(obs/ndim) - tcrossprod(obs.sum/(obs/ndim)))
+    if (!cheat && (obs %% decomp.freq) == 0 && obs<nthin*sample.size*burn.in) {
+      S.eig <- eigen(obs.scatter/scatter.N - tcrossprod(obs.sum/scatter.N))
     }
 
     # With prob. beta, pick a random direction.  Otherwise, pick a
@@ -111,13 +113,14 @@ univar.eigen.sample <- function(target.dist, x0, sample.size,
         U <- x1.offset
     }
 
-    # Save every ndim updates into X and add the observation to the
+    # Save every nthin updates into X and add the observation to the
     # sum and scatter matrix.
 
-    if (obs %% ndim == 0) {
-      X[obs/ndim,] <- x1
+    if (obs %% nthin == 0) {
+      X[obs/nthin,] <- x1
       obs.sum <- obs.sum + x1
       obs.scatter <- obs.scatter + tcrossprod(x1)
+      scatter.N <- scatter.N + 1
     }
     x0 <- x1
   }

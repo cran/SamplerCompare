@@ -1,8 +1,9 @@
 library('SamplerCompare')
 gauss.cor7 <- make.gaussian(mean=c(1,2), rho=0.7)
 gamma.shape23 <- make.mv.gamma.dist(shape=c(2,3))
-sim.results <- compare.samplers(sample.size=1000,
-                                dists=list(gauss.cor7, gamma.shape23),
-                                samplers=list(adaptive.metropolis.sample,
-                                              arms.sample),
-                                tuning=c(1,20,400))
+sampler.comparison <-
+  compare.samplers(sample.size=200,
+                   dists=list(gauss.cor7, gamma.shape23),
+                   samplers=list(adaptive.metropolis.sample, arms.sample),
+                   tuning=10^seq(-1,2,by=1),
+                   completed.file="intro-compare.rda")
