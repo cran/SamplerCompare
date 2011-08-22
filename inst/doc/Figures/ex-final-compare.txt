@@ -1,0 +1,4 @@
+       dist    sampler tuning        act evals     cpu         err
+1 Beta(2,3) Metropolis    0.1  18.308804 1.001 8.0e-05 0.009270565
+2 Beta(2,3) Metropolis    1.0   6.166051 1.001 7.0e-05 0.027165487
+3 Beta(2,3) Metropolis   10.0 230.008586 1.001 6.8e-05 0.036684207

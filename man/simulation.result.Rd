@@ -87,6 +87,11 @@
   \dQuote{Introduction to SamplerCompare} (vignette)
 }
 
+\references{
+  Thompson, M. B. (2011), \dQuote{Introduction to SamplerCompare,}
+  Journal of Statistical Software 43(12):1-10.
+}
+
 \examples{\dontrun{
 # An example generated with the following JAGS model:
 #

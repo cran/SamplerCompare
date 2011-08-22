@@ -1,5 +1,5 @@
 % From SamplerCompare, (c) 2010 Madeleine Thompson
-% $Id: comparison.plot.Rd 3019 2011-04-12 00:50:21Z mthompson $
+% $Id: comparison.plot.Rd 3130 2011-08-23 02:35:23Z mthompson $
 
 \name{comparison.plot}
 
@@ -66,4 +66,7 @@
 \references{
   Thompson, M. B. (2010), Graphical comparison of MCMC performance,
   University of Toronto Dept. of Statistics technical report no. 1010.
+
+  Thompson, M. B. (2011), \dQuote{Introduction to SamplerCompare,}
+  Journal of Statistical Software 43(12):1-10.
 }

@@ -8,7 +8,7 @@
 \usepackage{verbatim}
 
 \def\svndate$#1: #2-#3-#4 #5 #6 (#7) ${\def\fmtdate{#2--#3--#4}}
-\svndate$Date: 2011-07-30 20:29:17 -0400 (Sat, 30 Jul 2011) $
+\svndate$Date: 2011-08-23 21:20:33 -0400 (Tue, 23 Aug 2011) $
 
 \title{Introduction to \pkg{SamplerCompare}}
 \author{Madeleine B. Thompson\\University of Toronto}
@@ -53,21 +53,24 @@
 \begin{document}
 
 <<echo=FALSE, results=hide>>=
-capture.output(source('ex-compare-samplers.Rfrag'),
-  file='ex-compare-samplers.txt')
-capture.output(source('ex-compare-results.Rfrag'),
-  file='ex-compare-results.txt')
+capture.output(source('Code/ex-compare-samplers.Rfrag'),
+  file='Figures/ex-compare-samplers.txt')
+capture.output(source('Code/ex-compare-results.Rfrag'),
+  file='Figures/ex-compare-results.txt')
 
-pdf('ex-comparison-plot.pdf', height=4, width=4)
-print(comparison.plot(sampler.comparison,base_size=8))
+pdf('Figures/ex-comparison-plot.pdf', height=4, width=4)
+print(comparison.plot(sampler.comparison, base_size=8))
 dev.off()
 
-source('ex-metropolis.Rfrag')
-source('ex-beta.Rfrag')
-source('ex-final.Rfrag')
-capture.output(source('ex-final-compare.Rfrag'),
-  file='ex-final-compare.txt')
+source('Code/ex-metropolis.Rfrag')
+source('Code/ex-beta.Rfrag')
+source('Code/ex-final.Rfrag')
+capture.output(source('Code/ex-final-compare.Rfrag'),
+  file='Figures/ex-final-compare.txt')
 @
+
+\noindent A version of this document was published as  % remove-for-jss
+\citet{sc-intro-jss}.                                  % remove-for-jss
 
 \section{Purpose of package}
 
@@ -209,11 +212,11 @@ Suppose we would like to compare Adaptive Metropolis
 two-dimensional Gaussian (\code{make.gaussian}) and Gamma (\code{make.mv.gamma.dist})
 distributions.  We can do this with \code{compare.samplers} using the
 \proglang{R} code:
-\verbatiminput{ex-compare-samplers.Rfrag}
+\verbatiminput{Code/ex-compare-samplers.Rfrag}
 
 The call to \code{compare.samplers} generates the following trace, with
 one line for each simulation:
-\verbatiminput{ex-compare-samplers.txt}
+\verbatiminput{Figures/ex-compare-samplers.txt}
 Each line in the trace has the distribution name, the sampler name,
 the number of evaluations per uncorrelated observation with 95\%
 confidence interval in parentheses, the tuning parameter, and the
@@ -225,9 +228,9 @@ for example, how many evaluations and how many processor seconds
 Adaptive Metropolis needed to generate an uncorrelated observation
 on the two-dimensional Gaussian, one would multiply the \code{act} column
 by the \code{evals} and \code{cpu} columns:
-\verbatiminput{ex-compare-results.Rfrag}
+\verbatiminput{Code/ex-compare-results.Rfrag}
 This generates the output:
-\verbatiminput{ex-compare-results.txt}
+\verbatiminput{Figures/ex-compare-results.txt}
 Notice that the first product is the same as the one reported in
 the corresponding line from the \code{compare.samplers} trace output
 (the seventh, \texttt{N2,rho=0.7 Adaptive Metropolis}~.~.~.
@@ -264,7 +267,7 @@ The results are shown in Figure~\ref{ex-comparison-plot}.
 
 \begin{figure}
 \begin{center}
-\includegraphics{ex-comparison-plot.pdf}
+\includegraphics{Figures/ex-comparison-plot.pdf}
 \end{center}
 \caption{A comparison between Adaptive Metropolis and ARMS on
 two-dimensional Gaussians and gammas.  See section~\ref{visualizing}
@@ -318,7 +321,7 @@ element, indicating the number of times it did this.
 
 The following code specifies a Metropolis sampler with multivariate
 proposals:
-\verbatiminput{ex-metropolis.Rfrag}
+\verbatiminput{Code/ex-metropolis.Rfrag}
 
 See the \proglang{R} help for \code{compare.samplers} for more information
 on writing samplers in \proglang{R}.  See the \proglang{R} help for
@@ -340,7 +343,7 @@ is outside the support of the distribution.  The log density does
 not need to be normalized.
 
 The following \proglang{R} code defines a Beta(2,3) distribution:
-\verbatiminput{ex-beta.Rfrag}
+\verbatiminput{Code/ex-beta.Rfrag}
 The optional \code{mean} argument to \code{make.dist} makes the autocorrelation
 time computation in \code{compare.samplers} more accurate, so it is advisable
 to specify it when the mean is known.
@@ -352,12 +355,12 @@ included samplers and distributions.  To use the Metropolis sampler
 defined in section~\ref{sec-sampler} to sample from the beta
 distribution defined in section~\ref{sec-dist}, one can run the
 code from those two sections and then run:
-\verbatiminput{ex-final.Rfrag}
+\verbatiminput{Code/ex-final.Rfrag}
 User-defined samplers can also be used with \code{compare.samplers}:
-\verbatiminput{ex-final-compare.Rfrag}
+\verbatiminput{Code/ex-final-compare.Rfrag}
 The call to \code{print(subset(...))} shows some of the columns of the
 result object:
-\verbatiminput{ex-final-compare.txt}
+\verbatiminput{Figures/ex-final-compare.txt}
 One can see that since the evaluations per iteration (\code{evals}) and
 processor-seconds per iteration (\code{cpu}) are similar for each
 simulation, and the autocorrelation time (\code{act}) is lowest for a

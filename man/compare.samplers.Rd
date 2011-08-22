@@ -1,5 +1,5 @@
 % From SamplerCompare, (c) 2010-2011 Madeleine Thompson
-% $Id: compare.samplers.Rd 2995 2011-04-10 12:48:59Z mthompson $
+% $Id: compare.samplers.Rd 3130 2011-08-23 02:35:23Z mthompson $
 
 \name{compare.samplers}
 
@@ -148,6 +148,9 @@ and tuning parameters}
 \references{
   Thompson, M. B. (2010), Graphical comparison of MCMC performance,
   University of Toronto Dept. of Statistics technical report no. 1010.
+
+  Thompson, M. B. (2011), \dQuote{Introduction to SamplerCompare,}
+  Journal of Statistical Software 43(12):1-10.
 }
 
 \seealso{

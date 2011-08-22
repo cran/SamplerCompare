@@ -1,0 +1,20 @@
+Simulation started at 2011-08-23 21:21:06.
+Writing results to intro-compare.rda.
+N2,rho=0.7 Adaptive Metropolis: 557 (156,Inf) evals tuning=0.1; act.y=92.7
+N2,rho=0.7 ARMS: 676 (294,9.87e+03) evals tuning=0.1; act.y=5.93
+Gamma2 Adaptive Metropolis: 649 (155,Inf) evals tuning=0.1; act.y=9.88
+Gamma2 ARMS: 17.8 (10.9,30.7) evals tuning=0.1; act.y=2.01
+N2,rho=0.7 Adaptive Metropolis: 13.3 (8.53,21.8) evals tuning=1; act.y=6.6
+N2,rho=0.7 ARMS: 656 (288,4.41e+04) evals tuning=1; act.y=9.88
+Gamma2 Adaptive Metropolis: 65.8 (23.6,1.73e+03) evals tuning=1; act.y=9.42
+Gamma2 ARMS: 7.01 (5.17,9.83) evals tuning=1; act.y=1.29
+N2,rho=0.7 Adaptive Metropolis: 250 (80.1,Inf) evals tuning=10; act.y=44.8
+N2,rho=0.7 ARMS: 2.73e+03 (893,Inf) evals tuning=10; act.y=28.4
+Gamma2 Adaptive Metropolis: 76.2 (32.2,1.16e+03) evals tuning=10; act.y=3.16
+Gamma2 ARMS: 12.7 (9.13,16.9) evals tuning=10; act.y=0.999
+N2,rho=0.7 Adaptive Metropolis: NA (NA,NA) evals tuning=100; act.y=NA
+N2,rho=0.7 ARMS: 1.34e+03 (563,Inf) evals tuning=100; act.y=15
+Gamma2 Adaptive Metropolis: 644 (154,Inf) evals tuning=100; act.y=96.5
+Gamma2 ARMS: 12.2 (9.13,16.3) evals tuning=100; act.y=0.94
+Simulation finished at 2011-08-23 21:21:13, 7.41s elapsed.
+Wrote results to intro-compare.rda.

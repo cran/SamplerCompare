@@ -13,8 +13,8 @@ the results of those simulations.  See sc-intro.pdf for an introduction.}
 \tabular{ll}{
 Package: \tab SamplerCompare\cr
 Type: \tab Package\cr
-Version: \tab 1.2\cr
-Date: \tab 2011-07-30\cr
+Version: \tab 1.2.1\cr
+Date: \tab 2011-08-22\cr
 License: \tab GPL-2\cr
 Copyright: \tab (c) 2010-2011 Madeleine Thompson, except \file{dch*d.f} and the JSS style files.\cr
 LazyLoad: \tab yes\cr
