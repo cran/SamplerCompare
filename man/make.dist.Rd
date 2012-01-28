@@ -1,5 +1,5 @@
 % From SamplerCompare, (c) 2010 Madeleine Thompson
-% $Id: make.dist.Rd 2995 2011-04-10 12:48:59Z mthompson $
+% $Id: make.dist.Rd 3139 2012-01-28 19:24:19Z mthompson $
 
 \name{make.dist}
 
@@ -19,7 +19,7 @@
   \item{ndim}{The size of the distribution's state space.}
   \item{name}{A human-readable name for the distribution.}
   \item{name.expression}{A name for the distribution in
-    \code{\link{plotmath}} notation.  Used in preference to \code{name} in
+    \code{plotmath} notation.  Used in preference to \code{name} in
     plot functions when available.}
   \item{log.density}{A function taking a vector argument that returns
     the log density of the distribution evaluated at that point.}

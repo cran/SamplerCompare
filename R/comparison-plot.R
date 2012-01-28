@@ -1,5 +1,5 @@
 # From SamplerCompare, (c) 2010 Madeleine Thompson
-# $Id: comparison-plot.R 3045 2011-04-23 03:03:14Z mthompson $
+# $Id: comparison-plot.R 3142 2012-01-28 19:40:39Z mthompson $
 
 # comparison.plot generates a plot comparing MCMC performance as
 # described in "Graphical Comparison of MCMC Performance" (forthcoming).
@@ -33,7 +33,7 @@ comparison.plot <- function(RS, xlab=NULL, ylab=NULL, base_size=10, ...) {
   p <- qplot(tuning, evals*act, ymin=evals*act.025, ymax=evals*act.975,
       data=RSfinite, log='xy', geom='pointrange', xlab=xlab, ylab=ylab, ...) +
     facet_grid(dist.expr~sampler.expr, labeller=label_parsed) +
-    scale_x_log(breaks=x.breaks, labels=x.breaks) +
+    scale_x_log10(breaks=x.breaks, labels=x.breaks) +
     theme_bw(base_size=base_size) +
     opts(panel.grid.minor=theme_blank(),
          axis.text.x=theme_text(angle=45, vjust=1))

@@ -1,5 +1,5 @@
 % From SamplerCompare, (c) 2010 Madeleine Thompson
-% $Id: comparison.plot.Rd 3130 2011-08-23 02:35:23Z mthompson $
+% $Id: comparison.plot.Rd 3139 2012-01-28 19:24:19Z mthompson $
 
 \name{comparison.plot}
 
@@ -16,9 +16,9 @@
   \item{RS}{A data frame in the form returned by
     \code{\link{compare.samplers}} and \code{\link{simulation.result}}.}
   \item{xlab, ylab, ...}{Options to be passed to
-    \code{\link[ggplot2]{qplot}}.}
+    \code{ggplot2::qplot}.}
   \item{base_size}{The text base size passed to
-    \code{\link[ggplot2]{theme_bw}}}
+    \code{ggplot2::theme_bw}.}
 }
 
 \details{
@@ -36,10 +36,10 @@
   default plot character.
 
   \code{comparison.plot} returns a \pkg{ggplot2} plot object.  If it
-  is called non-interactively, one must call \code{\link{print}}
+  is called non-interactively, one must call \code{print}
   on the returned object for a plot to be displayed.  To superimpose
   other figures of merit on the plot, one can add \code{geom_*}
-  objects to the returned plot object before calling \code{\link{print}}.
+  objects to the returned plot object before calling \code{print}.
 
   For more discussion of this type of plot, see Thompson (2010).
 }
@@ -59,7 +59,7 @@
 \seealso{
   \code{\link{compare.samplers}},
   \code{\link{simulation.result}},
-  \code{\link[ggplot2]{qplot}},
+  \code{ggplot2::qplot},
   \dQuote{Introduction to SamplerCompare} (vignette)
 }
 

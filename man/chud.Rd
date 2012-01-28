@@ -1,5 +1,5 @@
 % From SamplerCompare, (c) 2010 Madeleine Thompson
-% $Id: chud.Rd 1490 2010-08-26 02:50:46Z mthompson $
+% $Id: chud.Rd 3139 2012-01-28 19:24:19Z mthompson $
 
 \name{chud}
 
@@ -32,7 +32,7 @@ chdd(R,x)}
 }
 
 \seealso{
-  \code{\link{chol}}
+  \code{chol}
 }
 
 \references{

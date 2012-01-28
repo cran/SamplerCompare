@@ -1,16 +1,17 @@
 % From SamplerCompare, by Madeleine Thompson
-% $Id: glue.Rnw 1625 2010-09-14 20:51:58Z mthompson $
+% $Id: glue.Rnw 3141 2012-01-28 19:25:01Z mthompson $
 
 %\VignetteIndexEntry{R/C Glue in SamplerCompare}
 
 \documentclass{article}
-\usepackage{fullpage,url}
+\usepackage[margin=1in]{geometry}
+\usepackage{url}
 \usepackage[onehalfspacing]{setspace}
 \usepackage{fancyvrb}
   \DefineShortVerb{\|}
 
 \def\svndate$#1: #2-#3-#4 #5 #6 (#7) ${\def\fmtdate{#2--#3--#4}}
-\svndate$Date: 2010-09-14 16:51:58 -0400 (Tue, 14 Sep 2010) $
+\svndate$Date: 2012-01-28 14:25:01 -0500 (Sat, 28 Jan 2012) $
 
 \title{R/C Glue in SamplerCompare}
 \author{Madeleine Thompson}

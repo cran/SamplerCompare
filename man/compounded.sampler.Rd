@@ -15,7 +15,7 @@
   \item{step.functions}{A list of transition functions; see details.}
   \item{name}{A character string naming the sampler.}
   \item{name.expr}{A character string naming the sampler in
-    \code{\link{plotmath}} notation.}
+    \code{plotmath} notation.}
 }
 
 \details{

@@ -1,5 +1,5 @@
 % From SamplerCompare, (c) 2010 Madeleine Thompson
-% $Id: make.c.dist.Rd 1607 2010-09-11 15:45:13Z mthompson $
+% $Id: make.c.dist.Rd 3139 2012-01-28 19:24:19Z mthompson $
 
 \name{make.c.dist}
 
@@ -20,7 +20,7 @@
     gradient of the target distribution.}
   \item{c.context}{An opaque object passed to \code{c.log.density}}
   \item{name.expression}{A name for the distribution in
-    \code{\link{plotmath}} notation.  Used in preference to \code{name} in
+    \code{plotmath} notation.  Used in preference to \code{name} in
     plot functions when available.}
   \item{mean}{A vector specifying the true mean of the distribution.}
   \item{cov}{A matrix specifying the true covariance of the distribution.}

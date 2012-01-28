@@ -1,5 +1,5 @@
 % From SamplerCompare, (c) 2010 Madeleine Thompson
-% $Id: ar.act.Rd 1525 2010-08-29 13:35:04Z mthompson $
+% $Id: ar.act.Rd 3139 2012-01-28 19:24:19Z mthompson $
 
 \name{ar.act}
 
@@ -56,7 +56,7 @@
 
 \seealso{
   \code{\link{compare.samplers}},
-  \code{\link{ar.yw}},
+  \code{ar.yw},
   \code{CODA::effectiveSize},
   \code{CODA::spectrum0.ar}
 }

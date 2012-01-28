@@ -1,5 +1,5 @@
 % From SamplerCompare, (c) 2010 Madeleine Thompson
-% $Id: wrap.c.sampler.Rd 1490 2010-08-26 02:50:46Z mthompson $
+% $Id: wrap.c.sampler.Rd 3139 2012-01-28 19:24:19Z mthompson $
 
 \name{wrap.c.sampler}
 
@@ -19,7 +19,7 @@
     sampler function.}
   \item{name}{The \code{name} attribute for the sampler function.}
   \item{name.expression}{The \code{name.expression} attribute for
-    the sampler function, in \code{\link{plotmath}} format.}
+    the sampler function, in \code{plotmath} format.}
 }
 
 \details{
