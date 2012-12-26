@@ -1,5 +1,4 @@
 # From SamplerCompare, (c) 2010 Madeleine Thompson
-# $Id: chud.R 1490 2010-08-26 02:50:46Z mthompson $
 
 # Computes Q such that Q^T Q = R^T R + x x^T.
 

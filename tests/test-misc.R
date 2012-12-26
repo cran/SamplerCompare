@@ -1,5 +1,4 @@
 # From SamplerCompare, (c) 2010 Madeleine Thompson
-# $Id: test-misc.R 1518 2010-08-28 20:24:12Z mthompson $
 
 # This script contains a couple miscellaneous tests.
 

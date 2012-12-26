@@ -1,5 +1,4 @@
 // From SamplerCompare, (c) 2010 Madeleine Thompson
-// $Id: slice.c 1521 2010-08-28 21:17:53Z mthompson $
 
 // slice.c contains a C implementation of the shrinking rank slice
 // sampler.  It uses the transition_fn abstraction that allows a sampler

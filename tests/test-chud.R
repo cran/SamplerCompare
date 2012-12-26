@@ -1,5 +1,4 @@
 # From SamplerCompare, (c) 2010 Madeleine Thompson
-# $Id: test-chud.R 1519 2010-08-28 20:24:37Z mthompson $
 
 # This tests the chud (Cholesky update) and chdd (Cholesky downdate)
 # functions in chud.R.

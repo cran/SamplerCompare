@@ -1,5 +1,4 @@
 % From SamplerCompare, (c) 2010 Madeleine Thompson
-% $Id: wrap.c.sampler.Rd 3139 2012-01-28 19:24:19Z mthompson $
 
 \name{wrap.c.sampler}
 

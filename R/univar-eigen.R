@@ -1,4 +1,4 @@
-# $Id: univar-eigen.R 2847 2011-03-28 18:32:23Z mthompson $
+# From SamplerCompare, (c) 2010 Madeleine Thompson
 
 # A slice sampler that samples along estimated eigenvectors of the
 # underlying distribution.

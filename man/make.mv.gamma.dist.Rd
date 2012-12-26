@@ -1,5 +1,4 @@
 % From SamplerCompare, (c) 2010 Madeleine Thompson
-% $Id: make.mv.gamma.dist.Rd 1490 2010-08-26 02:50:46Z mthompson $
 
 \name{make.mv.gamma.dist}
 

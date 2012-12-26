@@ -1,10 +1,9 @@
 # From SamplerCompare, (c) 2010 Madeleine Thompson
-# $Id: compare-samplers.R 3071 2011-05-01 18:06:48Z mthompson $
 
 # compare-samplers.R contains compare.samplers and its support
 # function eval.sampler, which runs an individual simulation.
-# See "Graphical Comparison of MCMC Samplers" (forthcoming) for
-# discussion of the figures of merit used here.
+# See "Graphical Comparison of MCMC Samplers" (http://arxiv.org/abs/1011.4457)
+# for discussion of the figures of merit used here.
 
 # compare.samplers is the main entry point for the SamplerCompare
 # package.  See ?compare.samplers for more information.
@@ -41,8 +40,7 @@ compare.samplers <- function(sample.size, dists, samplers,
   # Set up locking for an incremental save file.
 
   if (cores>1) {
-    require(synchronicity)
-    completed.lock <- boost.mutex()
+    completed.lock <- synchronicity::boost.mutex()
   } else {
     completed.lock <- NULL
   }
@@ -71,9 +69,8 @@ compare.samplers <- function(sample.size, dists, samplers,
   if (cores==1) {
     results <- lapply(1:nrow(jobs), eval.sampler.job.id)
   } else {
-    require(multicore)
-    results <- mclapply(1:nrow(jobs), eval.sampler.job.id,
-                        mc.preschedule=FALSE, mc.cores=cores)
+    results <- parallel::mclapply(1:nrow(jobs), eval.sampler.job.id,
+                                  mc.preschedule=FALSE, mc.cores=cores)
   }
 #  RS <- do.call(rbind, lapply(results, data.frame))
   
@@ -147,11 +144,15 @@ eval.sampler <- function(dist, sampler, sample.size, tuning.param,
   if (seed)
     .Random.seed <- saved.seed
 
-  # Save results to incremental file if necessary.
+  # Save results to incremental file if necessary.  This locking scheme will
+  # deadlock if there is ever an error loading and saving the completed file.
+  # This would usually mean the entire simulation needs to be re-run, but it
+  # would be nice if this caused all workers to fail.  As it is, one worker
+  # will fail and the others will hang.
 
   if (!is.null(completed.file)) {
     if (!is.null(completed.lock))
-      lock(completed.lock)
+      synchronicity::lock(completed.lock)
 
     load(completed.file)
     sc.new <- rbind(sampler.comparison, rv)
@@ -165,7 +166,7 @@ eval.sampler <- function(dist, sampler, sample.size, tuning.param,
     attr(sampler.comparison, 'last.stamp') <- Sys.time()
     save(sampler.comparison, file=completed.file)
     if (!is.null(completed.lock))
-      unlock(completed.lock)
+      synchronicity::unlock(completed.lock)
   }
 
   return(rv)

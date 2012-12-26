@@ -1,5 +1,4 @@
 // From SamplerCompare, (c) 2010 Madeleine Thompson
-// $Id: indep-mh-sampler.c 1554 2010-08-31 20:22:55Z mthompson $
 
 // indep-mh-sampler.c demonstrates how to implement a sampler
 // in C.  It defines an independence-Metropolis-Hastings sampler.

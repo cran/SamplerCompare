@@ -1,5 +1,4 @@
 % From SamplerCompare, (c) 2010 Madeleine Thompson
-% $Id: ar.act.Rd 3139 2012-01-28 19:24:19Z mthompson $
 
 \name{ar.act}
 
@@ -62,6 +61,6 @@
 }
 
 \references{
-  Thompson, M. B. (2010).  Graphical comparison of MCMC performance
-  (forthcoming).
+  Thompson, M. B. (2010).  Graphical comparison of MCMC performance.
+  \url{http://arxiv.org/abs/1011.4457}.
 }

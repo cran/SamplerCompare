@@ -1,5 +1,4 @@
 // From SamplerCompare, (c) 2010 Madeleine Thompson
-// $Id: arms.c 1495 2010-08-26 14:46:21Z mthompson $
 
 // arms.c contains an implementation of Gilks et al's Adaptive
 // Rejection Metropolis Sampling.

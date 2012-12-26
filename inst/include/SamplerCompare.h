@@ -1,5 +1,4 @@
 // From SamplerCompare, (c) 2010 Madeleine Thompson
-// $Id: SamplerCompare.h 1520 2010-08-28 21:17:25Z mthompson $
 
 #ifndef SAMPLERCOMPARE_H
 #define SAMPLERCOMPARE_H

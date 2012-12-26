@@ -1,5 +1,4 @@
 # From SamplerCompare, (c) 2010 Madeleine Thompson
-# $Id: distributions.R 2996 2011-04-10 13:01:07Z mthompson $
 
 # distributions.R contains example distributions and functions for
 # generating example distributions.

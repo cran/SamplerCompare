@@ -1,5 +1,4 @@
 # From SamplerCompare, (c) 2010 Madeleine Thompson
-# $Id: test-indep-mh.R 1626 2010-09-14 20:52:15Z mthompson $
 
 # This script makes sure the indep-mh-sampler.c example works as
 # described in glue.Rnw.

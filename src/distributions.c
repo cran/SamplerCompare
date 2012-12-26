@@ -1,5 +1,4 @@
 // From SamplerCompare, (c) 2010 Madeleine Thompson
-// $Id: distributions.c 1495 2010-08-26 14:46:21Z mthompson $
 
 // distributions.c contains C implementations of a two dimensional
 // Gaussian and Roberts and Rosenthal's cone distribution.

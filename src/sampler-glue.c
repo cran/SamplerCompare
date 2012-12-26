@@ -1,5 +1,4 @@
 // From SamplerCompare, (c) 2010 Madeleine Thompson
-// $Id: sampler-glue.c 2185 2011-01-11 14:42:35Z mthompson $
 
 // sampler-glue.c contains functions related to the R/C interface
 // for samplers and distributions.  See the vignette "R/C Glue in

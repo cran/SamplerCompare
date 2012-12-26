@@ -1,3 +1,1 @@
-# $Id: Makevars.win 1616 2010-09-13 03:46:44Z mthompson $
-
 PKG_LIBS=$(BLAS_LIBS)

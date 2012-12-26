@@ -1,10 +1,9 @@
 # From SamplerCompare, (c) 2010 Madeleine Thompson
-# $Id: act.R 1759 2010-10-10 20:58:39Z mthompson $
 
 # act.R contains functions related to the computation of the
 # autocorrelation time of a Markov chain.  See "Graphical Comparison
-# of MCMC Samplers" (forthcoming) for a discussion of autocorrelation
-# times and examples of how one might use them.
+# of MCMC Samplers" (http://arxiv.org/abs/1011.4457) for a discussion of
+# autocorrelation times and examples of how one might use them.
 
 # Computes the autocorrelation time (correlation length) of the
 # vector y using an AR(p) model, where p is chosen with AIC.  y
@@ -103,31 +102,4 @@ ar.act <- function(Y, true.mean=NULL) {
     return(list(act=NA, act.025=NA, act.975=NA, se=NA, order=NA))
   else
     return(acts[,max.i])
-}
-
-# Compute the ACT of the vector x, which is assumed to be de-meaned.
-# Uses the initial convex sequence to choose a lag.  See documentation
-# for mcmc::initseq for details.
-#
-# This is the only place in SamplerCompare where the mcmc package is
-# used, and it is not core functionality (compare.samplers uses
-# ar.act), so it loads mcmc explicitly.
-#
-# This function bypasses the R API to initseq because the R code
-# always de-means the vector with the sample mean, which is not what
-# we want if we know the mean.
-
-ics.act1 <- function(x) {
-  stopifnot(require(mcmc))
-  is <- .Call("initseq", x, PACKAGE="mcmc")
-  is$var.con / is$gamma0
-}
-
-# Given a matrix of Markov chain states and their true means, return
-# the longest of their autocorrelation times as computed with the
-# initial convex sequence.  See ?ics.act for details.
-
-ics.act <- function(X, true.mean=colMeans(as.matrix(X))) {
-  A <- apply(sweep(as.matrix(X), 2, true.mean), 2, ics.act1)
-  return(max(A))
 }

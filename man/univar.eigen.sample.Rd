@@ -50,6 +50,6 @@ cheat.univar.eigen.sample(target.dist, x0, sample.size, tuning=1,
 }
 
 \references{
-  Thompson, M. B. (2011), Slice Sampling with Multivariate Steps
-  (forthcoming).
+  Thompson, M. B. (2011), Slice Sampling with Multivariate Steps.
+  \url{http://hdl.handle.net/1807/31955}.
 }

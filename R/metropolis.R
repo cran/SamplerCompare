@@ -1,5 +1,4 @@
 # From SamplerCompare, (c) 2010 Madeleine Thompson
-# $Id: metropolis.R 1494 2010-08-26 13:30:40Z mthompson $
 
 # metropolis.R contains implementations of three variations on the
 # Metropolis sampler: Metropolis with spherical proposals, Metropolis

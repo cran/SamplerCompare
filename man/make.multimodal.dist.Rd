@@ -1,5 +1,4 @@
 % From SamplerCompare, (c) 2010 Madeleine Thompson
-% $Id: make.multimodal.dist.Rd 1486 2010-08-25 21:47:38Z mthompson $
 
 \name{make.multimodal.dist}
 

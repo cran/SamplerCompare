@@ -1,5 +1,4 @@
 % From SamplerCompare, (c) 2010 Madeleine Thompson
-% $Id: funnel.dist.Rd 1607 2010-09-11 15:45:13Z mthompson $
 
 \name{funnel.dist}
 

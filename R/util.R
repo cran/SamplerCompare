@@ -1,5 +1,4 @@
 # From SamplerCompare, (c) 2010 Madeleine Thompson
-# $Id: util.R 2528 2011-02-17 21:31:12Z mthompson $
 
 # util.R is a place where assorted utility functions find a home.
 

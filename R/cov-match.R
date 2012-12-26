@@ -1,5 +1,4 @@
 # From SamplerCompare, (c) 2010 Madeleine Thompson
-# $Id: cov-match.R 2488 2011-02-12 22:10:54Z mthompson $
 
 # Covariance-matching slice sampler, see online help and the following
 # technical report for more information:

@@ -56,6 +56,6 @@ cheat.oblique.hyperrect.sample(target.dist, x0, sample.size, tuning=1)
   Neal, Radford M. (2003), \dQuote{Slice Sampling,} The Annals of
   Statistics 31(3):705-767.
 
-  Thompson, M. B. (2011), Slice Sampling with Multivariate Steps
-  (forthcoming).
+  Thompson, M. B. (2011), Slice Sampling with Multivariate Steps.
+  \url{http://hdl.handle.net/1807/31955}.
 }

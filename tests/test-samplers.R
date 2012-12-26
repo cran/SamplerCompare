@@ -1,5 +1,4 @@
 # From SamplerCompare, (c) 2010 Madeleine Thompson
-# $Id: test-samplers.R 2998 2011-04-10 18:07:51Z mthompson $
 
 # This script makes sure that all the samplers exported in NAMESPACE
 # can draw a 500-state sample from a simple 2D Gaussian implemented
@@ -19,14 +18,14 @@ all.samplers <- list(
   adaptive.metropolis.sample, univar.eigen.sample, cheat.univar.eigen.sample,
   oblique.hyperrect.sample, cheat.oblique.hyperrect.sample)
 
-# Use a second core if multicore package is available.  In production,
+# Use a second core if synchronicity package is available.  In production,
 # we would only do this if we were on a multi-core system, but it's
 # better to lose some efficiency here and guarantee the code path is
 # tested.  If we wanted to know the actual number of cores, the best
-# way to find it is multicore:::detectCores().
+# way to find it is parallel:::detectCores().
 
-has.multicore <- suppressWarnings(require('multicore', quietly=TRUE))
-if (has.multicore) {
+has.synchronicity <- 'synchronicity' %in% installed.packages()[,'Package']
+if (has.synchronicity) {
   cores <- 2
 } else {
   cores <- 1

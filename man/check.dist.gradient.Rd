@@ -1,5 +1,4 @@
 % From SamplerCompare, (c) 2010 Madeleine Thompson
-% $Id: check.dist.gradient.Rd 1484 2010-08-24 15:39:22Z mthompson $
 
 \name{check.dist.gradient}
 

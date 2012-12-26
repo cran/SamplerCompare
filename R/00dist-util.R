@@ -1,5 +1,4 @@
 # From SamplerCompare, (c) 2010 Madeleine Thompson
-# $Id: 00dist-util.R 2995 2011-04-10 12:48:59Z mthompson $
 
 # This file contains code for managing objects of the "dist" class,
 # which represent probability distributions in the SamplerCompare

@@ -1,13 +1,12 @@
 # From SamplerCompare, (c) 2010 Madeleine Thompson
-# $Id: comparison-plot.R 3142 2012-01-28 19:40:39Z mthompson $
 
 # comparison.plot generates a plot comparing MCMC performance as
-# described in "Graphical Comparison of MCMC Performance" (forthcoming).
-# See ?comparison.plot for usage details.
+# described in "Graphical Comparison of MCMC Performance".  See
+# ?comparison.plot for usage details.
+
+globalVariables(c('tuning', 'evals', 'act', 'act.025', 'act.975', 'lim'))
 
 comparison.plot <- function(RS, xlab=NULL, ylab=NULL, base_size=10, ...) {
-  stopifnot(require(ggplot2))
-
   # First, plot the results with finite ACT.
 
   RSfinite <- subset(RS, is.finite(RS$act))
@@ -30,13 +29,13 @@ comparison.plot <- function(RS, xlab=NULL, ylab=NULL, base_size=10, ...) {
   # they can specify them with the + operator on the returned value.
   # "labeller" really is spelled this way in facet_grid.
 
-  p <- qplot(tuning, evals*act, ymin=evals*act.025, ymax=evals*act.975,
+  p <- ggplot2::qplot(tuning, evals*act, ymin=evals*act.025, ymax=evals*act.975,
       data=RSfinite, log='xy', geom='pointrange', xlab=xlab, ylab=ylab, ...) +
-    facet_grid(dist.expr~sampler.expr, labeller=label_parsed) +
-    scale_x_log10(breaks=x.breaks, labels=x.breaks) +
-    theme_bw(base_size=base_size) +
-    opts(panel.grid.minor=theme_blank(),
-         axis.text.x=theme_text(angle=45, vjust=1))
+    ggplot2::facet_grid(dist.expr~sampler.expr, labeller=ggplot2::label_parsed) +
+    ggplot2::scale_x_log10(breaks=x.breaks, labels=x.breaks) +
+    ggplot2::theme_bw(base_size=base_size) +
+    ggplot2::theme(panel.grid.minor=ggplot2::element_blank(),
+                   axis.text.x=ggplot2::element_text(angle=45, vjust=1))
 
   # Next, plot the results with infinite/unknown ACT as question
   # marks at lim, computed to be at the top of the plot.
@@ -44,7 +43,8 @@ comparison.plot <- function(RS, xlab=NULL, ylab=NULL, base_size=10, ...) {
   if (any(!is.finite(RS$act))) {
     RSinf <- subset(RS, !is.finite(RS$act))
     RSinf$lim <- max(RSfinite$evals*RSfinite$act)
-    p <- p + geom_text(aes(x=tuning, y=lim, label='?'), data=RSinf, size=4.0)
+    p <- p + ggplot2::geom_text(ggplot2::aes(x=tuning, y=lim, label='?'),
+                                data=RSinf, size=4.0)
   }
 
   return(p)

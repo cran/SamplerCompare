@@ -1,5 +1,4 @@
 % From SamplerCompare, (c) 2010 Madeleine Thompson
-% $Id: raw.symbol.Rd 1487 2010-08-25 21:48:40Z mthompson $
 
 \name{raw.symbol}
 

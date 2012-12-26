@@ -1,5 +1,4 @@
 % From SamplerCompare, (c) 2010-2011 Madeleine Thompson
-% $Id: compare.samplers.Rd 3139 2012-01-28 19:24:19Z mthompson $
 
 \name{compare.samplers}
 

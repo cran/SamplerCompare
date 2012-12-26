@@ -1,5 +1,4 @@
 % From SamplerCompare, (c) 2010 Madeleine Thompson
-% $Id: chud.Rd 3139 2012-01-28 19:24:19Z mthompson $
 
 \name{chud}
 

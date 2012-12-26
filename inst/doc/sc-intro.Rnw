@@ -53,6 +53,7 @@
 \begin{document}
 
 <<echo=FALSE, results=hide>>=
+dir.create('Figures', showWarnings=FALSE)
 capture.output(source('Code/ex-compare-samplers.Rfrag'),
   file='Figures/ex-compare-samplers.txt')
 capture.output(source('Code/ex-compare-results.Rfrag'),
@@ -112,9 +113,9 @@ source package can be obtained from CRAN at:
 To install it, one must first install the \pkg{mvtnorm} package
 \citep{mvtnorm}.  To use \pkg{SamplerCompare}'s graphics, one must
 install the \pkg{ggplot2} package \citep{wickham09}.  To use
-multithreading, one must install the \pkg{multicore} \citep{multicore}
-and \pkg{synchronicity} \citep{synchronicity} packages.  These two
-are not available for Windows, so Windows users are limited to
+multithreading, one must install the
+\pkg{synchronicity} \citep{synchronicity} package.  It
+is not available for Windows, so Windows users are limited to
 single-threaded simulations.
 
 Alternatively, one can use the \code{install.packages} \proglang{R} command:

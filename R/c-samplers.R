@@ -1,5 +1,4 @@
 # From SamplerCompare, (c) 2010 Madeleine Thompson
-# $Id: c-samplers.R 1491 2010-08-26 02:55:31Z mthompson $
 
 # This file contains glue for calling MCMC samplers written in C
 # from R.  For more information, see the R help for each individual

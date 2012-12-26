@@ -1,5 +1,4 @@
 % From SamplerCompare, by Madeleine Thompson
-% $Id: glue.Rnw 3141 2012-01-28 19:25:01Z mthompson $
 
 %\VignetteIndexEntry{R/C Glue in SamplerCompare}
 

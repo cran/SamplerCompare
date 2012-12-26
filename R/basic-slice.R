@@ -1,5 +1,4 @@
 # From SamplerCompare, (c) 2010 Madeleine Thompson
-# $Id: basic-slice.R 1491 2010-08-26 02:55:31Z mthompson $
 
 # This file contains implementations of several slice samplers from:
 #
