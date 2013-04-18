@@ -13,10 +13,10 @@ the results of those simulations.  See sc-intro.pdf for an introduction.}
 \tabular{ll}{
 Package: \tab SamplerCompare\cr
 Type: \tab Package\cr
-Version: \tab 1.2.3\cr
-Date: \tab 2012-12-26\cr
+Version: \tab 1.2.4\cr
+Date: \tab 2013-04-18\cr
 License: \tab GPL-2\cr
-Copyright: \tab (c) 2010-2012 Madeleine Thompson, except \file{dchud.f} and
+Copyright: \tab (c) 2010-2013 Madeleine Thompson, except \file{dchud.f} and
   \file{dchdd.f}, which are in the public domain in the United States.\cr
 LazyLoad: \tab yes\cr
 }

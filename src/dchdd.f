@@ -1,7 +1,7 @@
       subroutine dchdd(r,ldr,p,x,z,ldz,nz,y,rho,c,s,info)
       integer ldr,p,ldz,nz,info
-      double precision r(ldr,1),x(1),z(ldz,1),y(1),s(1)
-      double precision rho(1),c(1)
+      double precision r(ldr,p),x(p),z(ldz,nz),y(nz),s(p)
+      double precision rho(nz),c(p)
 c
 c     dchdd downdates an augmented cholesky decomposition or the
 c     triangular factor of an augmented qr decomposition.

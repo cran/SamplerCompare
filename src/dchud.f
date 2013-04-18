@@ -1,7 +1,7 @@
       subroutine dchud(r,ldr,p,x,z,ldz,nz,y,rho,c,s)
       integer ldr,p,ldz,nz
-      double precision rho(1),c(1)
-      double precision r(ldr,1),x(1),z(ldz,1),y(1),s(1)
+      double precision rho(nz),c(p)
+      double precision r(ldr,p),x(p),z(ldz,nz),y(nz),s(p)
 c
 c     dchud updates an augmented cholesky decomposition of the
 c     triangular part of an augmented qr decomposition.  specifically,
