@@ -1,6 +1,6 @@
-inst/doc/Code
-inst/doc/Figures
-inst/doc/glue.Rnw
-inst/doc/jss668.bib
-inst/doc/sc-intro.R
-inst/doc/sc-intro.Rnw
+vignettes/Code
+vignettes/Figures
+vignettes/glue.Rnw
+vignettes/jss668.bib
+vignettes/sc-intro.R
+vignettes/sc-intro.Rnw

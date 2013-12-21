@@ -3,6 +3,9 @@
       double precision r(ldr,p),x(p),z(ldz,nz),y(nz),s(p)
       double precision rho(nz),c(p)
 c
+c     By G. W. Stewart.  Patched to pass array bounds checks by
+c     Madeleine Thompson.  In the public domain in the United States.
+c
 c     dchdd downdates an augmented cholesky decomposition or the
 c     triangular factor of an augmented qr decomposition.
 c     specifically, given an upper triangular matrix r of order p,  a
