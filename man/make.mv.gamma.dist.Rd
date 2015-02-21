@@ -29,7 +29,7 @@
 }
 
 \value{
-  A \code{dist} object.  For convenience, the \code{shape} and \code{scale}
+  A \code{scdist} object.  For convenience, the \code{shape} and \code{scale}
   elements are filled in with the parameters passed to
   \code{make.mv.gamma.dist}.
 }

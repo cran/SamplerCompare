@@ -4,19 +4,19 @@
 \alias{SamplerCompare-package}
 \alias{SamplerCompare}
 \docType{package}
-\title{A framework for comparing the performance of MCMC samplers}
-\description{This package consists of two components: a framework
-for running sets of MCMC samplers on sets of distributions with a
-variety of tuning parameters and plotting functions to visualize
-the results of those simulations.  See sc-intro.pdf for an introduction.}
+\title{A Framework for Comparing the Performance of MCMC Samplers}
+\description{A framework for running sets of MCMC samplers on sets of
+distributions with a variety of tuning parameters, along with plotting
+functions to visualize the results of those simulations.  See sc-intro.pdf for
+an introduction.}
 \details{
 \tabular{ll}{
 Package: \tab SamplerCompare\cr
 Type: \tab Package\cr
-Version: \tab 1.2.4\cr
-Date: \tab 2013-04-18\cr
+Version: \tab 1.2.6\cr
+Date: \tab 2015-02-21\cr
 License: \tab GPL-2\cr
-Copyright: \tab (c) 2010-2013 Madeleine Thompson, except \file{dchud.f} and
+Copyright: \tab (c) 2010-2015 Madeleine Thompson, except \file{dchud.f} and
   \file{dchdd.f}, which are in the public domain in the United States.\cr
 LazyLoad: \tab yes\cr
 }

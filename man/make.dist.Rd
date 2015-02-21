@@ -71,7 +71,7 @@
 }
 
 \value{
-  A \code{dist} object.  It has elements with the same names as the arguments
+  A \code{scdist} object.  It has elements with the same names as the arguments
   to \code{make.dist}.
 }
 

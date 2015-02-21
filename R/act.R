@@ -53,7 +53,7 @@ ar.act1  <- function(y) {
   # pi.var can be ill-conditioned.
 
   simulation.length <- min(max(40, length(y)), 5000)
-  AX <- rmvnorm(simulation.length, mean=pi, sigma=pi.var, method='svd')
+  AX <- mvtnorm::rmvnorm(simulation.length, mean=pi, sigma=pi.var, method='svd')
   act.sim <- numeric(simulation.length)
 
   # Compute simulation.length estimates of the ACT.

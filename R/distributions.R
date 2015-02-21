@@ -46,7 +46,9 @@ make.gaussian <- function(mean, sigma=NULL, rho=NULL) {
 
   # overdispersed initial point
 
-  initial <- function() as.numeric(rmvnorm(1, mean, 25/sqrt(ndim)*sigma))
+  initial <- function() {
+    as.numeric(mvtnorm::rmvnorm(1, mean, 25/sqrt(ndim)*sigma))
+  }
 
   mean.log.dens <- log.density(mean) - 0.5 * ndim
 

@@ -1,6 +1,6 @@
 # From SamplerCompare, (c) 2010 Madeleine Thompson
 
-# This file contains code for managing objects of the "dist" class,
+# This file contains code for managing objects of the "scdist" class,
 # which represent probability distributions in the SamplerCompare
 # package.  The R help for these functions and the vignette "R/C Glue
 # in SamplerCompare (doc/glue.pdf) may also be of interest.
@@ -21,7 +21,7 @@ make.dist <- function(ndim, name, name.expression=NULL,
   stopifnot(is.null(log.density.and.grad) || is.function(log.density.and.grad))
   stopifnot(is.null(initial) || is.function(initial))
 
-  # Define a dist object as a list, filling in whatever the user gave us.
+  # Define a scdist object as a list, filling in whatever the user gave us.
 
   ds <- list(ndim=ndim, name=name, name.expression=name.expression,
              log.density=log.density, grad.log.density=grad.log.density,
@@ -61,14 +61,14 @@ make.dist <- function(ndim, name, name.expression=NULL,
 
   # Mark the distribution with its class and return it.
 
-  class(ds) <- 'dist'
+  class(ds) <- 'scdist'
   return(ds)
 }
 
-# Overrides print() for dist objects.  Prints basic information
+# Overrides print() for scdist objects.  Prints basic information
 # about a distribution.
 
-print.dist <- function(x, ...) {
+print.scdist <- function(x, ...) {
   if (!is.null(x$c.log.density.and.grad))
     feat <- 'log-density and gradient implemented in C'
   else if (!is.null(x$log.density) && !is.null(x$grad.log.density))

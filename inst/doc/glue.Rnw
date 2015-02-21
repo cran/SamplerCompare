@@ -151,7 +151,7 @@ is nonzero.
 
 Once the log density function has been written in C, it is compiled
 and linked as described in section~\ref{compiling}.
-An R |dist| object can then be created with |make.c.dist|,
+An R |scdist| object can then be created with |make.c.dist|,
 which takes as arguments (among others) the name of the C function
 and an R object to be passed as the |context| element of the |dist_t|
 passed as the first argument to the |log_density_t|.  An example
@@ -239,10 +239,10 @@ the C function |raw_symbol|, which uses the R internal function
 function.  If it cannot be found, an error is reported.  Otherwise,
 |raw_symbol| returns this function pointer so that the linker does
 not need to be called every invocation.  The function pointer is
-stored in the |sym| element of the |dist| object as an R raw.
+stored in the |sym| element of the |scdist| object as an R raw.
 
 The |log.density| and |grad.log.density| functions in the
-|dist| object returned by |make.c.dist| are stubs that
+|scdist| object returned by |make.c.dist| are stubs that
 call |log.density.and.grad|, which itself uses |.Call| to invoke
 |R_invoked_C_glue|, a C function that calls the function pointer
 located by |raw_symbol|.

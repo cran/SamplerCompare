@@ -62,7 +62,7 @@ typedef struct {
 }
 
 \value{
-  A \code{dist} object.
+  A \code{scdist} object.
 }
 
 \seealso{

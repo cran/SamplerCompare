@@ -5,8 +5,9 @@
 export(compare.samplers, make.dist, make.c.dist, comparison.plot,
        ar.act, chud, chdd, raw.symbol, wrap.c.sampler, check.dist.gradient,
        compounded.sampler, twonorm, simulation.result)
-S3method(print, dist)
+S3method(print, scdist)
 useDynLib(SamplerCompare, dchud, dchdd, raw_symbol, R_invoked_C_glue)
+importFrom(mvtnorm, rmvnorm)
 
 # samplers
 

@@ -26,7 +26,7 @@
 }
 
 \value{
-  A \code{dist} object.
+  A \code{scdist} object.
 }
 
 \seealso{

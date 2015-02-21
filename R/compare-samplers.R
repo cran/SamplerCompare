@@ -14,7 +14,7 @@ compare.samplers <- function(sample.size, dists, samplers,
   # Ensure all distributions are of class dist and all samplers are
   # functions with a name attribute.
 
-  stopifnot(all(sapply(dists, function(a) class(a)=='dist')))
+  stopifnot(all(sapply(dists, function(a) class(a)=='scdist')))
 
   stopifnot(all(sapply(samplers,
     function(a) class(a)=='function' && !is.null(attr(a,'name')))))

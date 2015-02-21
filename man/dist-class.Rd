@@ -1,7 +1,7 @@
 % From SamplerCompare, (c) 2010 Madeleine Thompson
 
-\name{dist-class}
-\alias{dist-class}
+\name{scdist-class}
+\alias{scdist-class}
 \title{A class representing a probability distribution}
 
 \description{This class represents a probability distribution.

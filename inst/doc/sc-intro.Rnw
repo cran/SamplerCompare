@@ -197,7 +197,7 @@ information on an individual distribution or generator.}
 \end{table}
 
 The three central types of objects in \pkg{SamplerCompare} are
-distributions (which have the class \code{dist}), sampler functions, and
+distributions (which have the class \code{scdist}), sampler functions, and
 simulation results.  The function \code{compare.samplers} runs a list
 of samplers on a list of distributions with a set of tuning parameters
 and returns a data frame containing simulation results.  Sampler

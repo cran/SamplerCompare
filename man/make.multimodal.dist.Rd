@@ -31,7 +31,7 @@
 }
 
 \value{
-  A \code{dist} object.  For convenience, the \code{modes} element
+  A \code{scdist} object.  For convenience, the \code{modes} element
   is a matrix containing the modes as rows.
 }
 
