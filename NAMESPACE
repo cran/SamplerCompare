@@ -7,7 +7,9 @@ export(compare.samplers, make.dist, make.c.dist, comparison.plot,
        compounded.sampler, twonorm, simulation.result)
 S3method(print, scdist)
 useDynLib(SamplerCompare, dchud, dchdd, raw_symbol, R_invoked_C_glue)
-importFrom(mvtnorm, rmvnorm)
+importFrom('mvtnorm', 'rmvnorm')
+importFrom('stats', 'ar.yw', 'ARMAacf', 'cov', 'mahalanobis', 'quantile',
+           'rexp', 'rnorm', 'runif')
 
 # samplers
 

@@ -1,4 +1,4 @@
-% From SamplerCompare, (c) 2010-2011 Madeleine Thompson
+% From SamplerCompare, (c) 2010-2015 Madeleine Thompson
 
 \name{SamplerCompare-package}
 \alias{SamplerCompare-package}
@@ -13,8 +13,8 @@ an introduction.}
 \tabular{ll}{
 Package: \tab SamplerCompare\cr
 Type: \tab Package\cr
-Version: \tab 1.2.6\cr
-Date: \tab 2015-02-21\cr
+Version: \tab 1.2.7\cr
+Date: \tab 2015-07-03\cr
 License: \tab GPL-2\cr
 Copyright: \tab (c) 2010-2015 Madeleine Thompson, except \file{dchud.f} and
   \file{dchdd.f}, which are in the public domain in the United States.\cr
