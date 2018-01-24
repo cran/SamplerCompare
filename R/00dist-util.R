@@ -7,15 +7,17 @@
 
 # See ?make.dist for more information.
 
-make.dist <- function(ndim, name, name.expression=NULL,
-                      log.density=NULL, grad.log.density=NULL,
-                      log.density.and.grad=NULL, initial=NULL,
-                      mean=NULL, cov=NULL, mean.log.dens=NULL) {
-  stopifnot(ndim>0)
-  if (!is.null(mean))
-    stopifnot(length(mean)==ndim)
-  if (!is.null(cov))
-    stopifnot(all(dim(cov)==ndim))
+make.dist <- function(ndim, name, name.expression = NULL,
+                      log.density = NULL, grad.log.density = NULL,
+                      log.density.and.grad = NULL, initial = NULL,
+                      mean = NULL, cov = NULL, mean.log.dens = NULL) {
+  stopifnot(ndim > 0)
+  if (!is.null(mean)) {
+    stopifnot(length(mean) == ndim)
+  }
+  if (!is.null(cov)) {
+    stopifnot(all(dim(cov) == ndim))
+  }
   stopifnot(is.null(log.density) || is.function(log.density))
   stopifnot(is.null(grad.log.density) || is.function(grad.log.density))
   stopifnot(is.null(log.density.and.grad) || is.function(log.density.and.grad))
@@ -23,16 +25,16 @@ make.dist <- function(ndim, name, name.expression=NULL,
 
   # Define a scdist object as a list, filling in whatever the user gave us.
 
-  ds <- list(ndim=ndim, name=name, name.expression=name.expression,
-             log.density=log.density, grad.log.density=grad.log.density,
-             log.density.and.grad=log.density.and.grad, initial=initial,
-             mean=mean, cov=cov, mean.log.dens=mean.log.dens)
+  ds <- list(ndim = ndim, name = name, name.expression = name.expression,
+             log.density = log.density, grad.log.density = grad.log.density,
+             log.density.and.grad = log.density.and.grad, initial = initial,
+             mean = mean, cov = cov, mean.log.dens = mean.log.dens)
 
   # If the user gave us log.density.and.grad but not log.density,
   # fake up a log.density.
 
   if (is.null(log.density) && !is.null(log.density.and.grad)) {
-    ds$log.density <- function(x) log.density.and.grad(x,FALSE)$log.density
+    ds$log.density <- function(x) log.density.and.grad(x, FALSE)$log.density
   }
 
   # If the user gave us log.density.and.grad but not grad.log.density,
@@ -40,7 +42,7 @@ make.dist <- function(ndim, name, name.expression=NULL,
 
   if (is.null(grad.log.density) && !is.null(log.density.and.grad)) {
     ds$grad.log.density <-
-      function(x) log.density.and.grad(x,TRUE)$grad.log.density
+      function(x) log.density.and.grad(x, TRUE)$grad.log.density
   }
 
   # If the user gave us log.density but not log.density.and.grad,
@@ -48,20 +50,20 @@ make.dist <- function(ndim, name, name.expression=NULL,
   # is TRUE and grad.log.density was unspecified.
 
   if (is.null(log.density.and.grad) && !is.null(log.density)) {
-    ds$log.density.and.grad <- function(x, compute.grad=FALSE) {
+    ds$log.density.and.grad <- function(x, compute.grad = FALSE) {
       if (compute.grad) {
         stopifnot(!is.null(ds$grad.log.density))
-        return(list(log.density=ds$log.density(x),
-                    grad.log.density=ds$grad.log.density(x)))
+        return(list(log.density = ds$log.density(x),
+                    grad.log.density = ds$grad.log.density(x)))
       } else {
-        return(list(log.density=ds$log.density(x)))
+        return(list(log.density = ds$log.density(x)))
       }
     }
   }
 
   # Mark the distribution with its class and return it.
 
-  class(ds) <- 'scdist'
+  class(ds) <- "scdist"
   return(ds)
 }
 
@@ -70,36 +72,36 @@ make.dist <- function(ndim, name, name.expression=NULL,
 
 print.scdist <- function(x, ...) {
   if (!is.null(x$c.log.density.and.grad))
-    feat <- 'log-density and gradient implemented in C'
+    feat <- "log-density and gradient implemented in C"
   else if (!is.null(x$log.density) && !is.null(x$grad.log.density))
-    feat <- 'known log-density and gradient'
+    feat <- "known log-density and gradient"
   else if (!is.null(x$log.density))
-    feat <- 'known log-density'
+    feat <- "known log-density"
   else
-    feat <- 'unknown log-density'
+    feat <- "unknown log-density"
   cat(sprintf("%s (%d dimensions, %s)\n", x$name, x$ndim, feat))
 }
 
 # See ?make.c.dist for more information.
 
-make.c.dist <- function(ndim, name, c.log.density, c.context=NULL,
-                        name.expression=NULL, mean=NULL, cov=NULL) {
+make.c.dist <- function(ndim, name, c.log.density, c.context = NULL,
+                        name.expression = NULL, mean = NULL, cov = NULL) {
 
   # Make a distribution object.
 
-  ds <- make.dist(ndim, name, name.expression=name.expression,
-                  mean=mean, cov=cov)
-  
+  ds <- make.dist(ndim, name, name.expression = name.expression,
+                  mean = mean, cov = cov)
+
   # Locate the symbol for the log density.
 
   ndim <- as.integer(ndim)
-  stopifnot(is.character(c.log.density) && length(c.log.density==1))
+  stopifnot(is.character(c.log.density) && length(c.log.density == 1))
   ds$sym <- raw.symbol(c.log.density)
 
   # Define log.density.and.grad wrapper that calls the C version.
 
   ds$log.density.and.grad <- function(x, compute.grad=FALSE) {
-    stopifnot(is.numeric(x) && length(x)==ndim)
+    stopifnot(is.numeric(x) && length(x) == ndim)
     r <- .Call(R_invoked_C_glue, ds$sym, c.context, x, compute.grad)
     return(r)
   }
@@ -111,7 +113,7 @@ make.c.dist <- function(ndim, name, c.log.density, c.context=NULL,
   }
 
   ds$grad.log.density <- function(x) {
-    ds$log.density.and.grad(x, compute.grad=TRUE)$grad.log.density
+    ds$log.density.and.grad(x, compute.grad = TRUE)$grad.log.density
   }
 
   # Note c.log.density.and.grad and c.context for debugging and print().
@@ -137,7 +139,7 @@ check.dist.gradient <- function(ds, x, h=1e-7) {
 
   g <- ds$grad.log.density(x)
   stopifnot(all(is.finite(g)))
-  stopifnot(length(g)==length(x))
+  stopifnot(length(g) == length(x))
 
   # Check each coordinate.
 
@@ -152,17 +154,17 @@ check.discrete.gradient <- function(f, x, g, i, h) {
 
   # element vector
 
-  e <- c(rep(0,i-1),1,rep(0,length(x)-i))
+  e <- c(rep(0, i - 1), 1, rep(0, length(x) - i))
 
   # approximation
 
-  g.discrete <- (f(x+e*h*x[i]) - f(x-e*h*x[i])) / 2 / h / x[i]
+  g.discrete <- (f(x + e * h * x[i]) - f(x - e * h * x[i])) / 2 / h / x[i]
   stopifnot(is.finite(g.discrete))
 
   # If relative error is more than 0.001, fail.
 
-  if((g[i]==0 && abs(g.discrete) > 1e-8) ||
-     (g[i]!=0 && abs( (g.discrete-g[i])/g[i] ) > 1e-3)) {
+  if ((g[i] == 0 && abs(g.discrete) > 1e-8) ||
+      (g[i] != 0 && abs((g.discrete - g[i]) / g[i]) > 1e-3)) {
     stop("Gradients do not match.\n",
          sprintf("analytic grad[%d] = %.5g   discrete grad[%d] = %.5g\n",
                  i, g[i], i, g.discrete))
@@ -171,19 +173,19 @@ check.discrete.gradient <- function(f, x, g, i, h) {
 
 # Turn a list of step functions into a sampler function.
 
-compounded.sampler <- function(step.functions, name, name.expr=NULL) {
-  sampler <- function(target.dist, x0, sample.size, limit=NULL, ...) {
+compounded.sampler <- function(step.functions, name, name.expr = NULL) {
+  sampler <- function(target.dist, x0, sample.size, limit = NULL, ...) {
     # Initialization
 
-    X <- array(NA,c(sample.size,length(x0)))
-    step <- list(x=x0, y=target.dist$log.density(x0))
+    X <- array(NA, c(sample.size, length(x0)))
+    step <- list(x = x0, y = target.dist$log.density(x0))
     grads <- 0
     evals <- 1
 
     # Loop that generates sample.size observations from target distribution
 
     for (obs in 1:sample.size) {
-      
+
       # Take one step with each method.
 
       for (s in 1:length(step.functions)) {
@@ -195,20 +197,20 @@ compounded.sampler <- function(step.functions, name, name.expr=NULL) {
       # Store accepted observation and check to make sure the procedure
       # has not been running too long.
 
-      X[obs,] <- step$x
+      X[obs, ] <- step$x
 
       if (!is.null(limit) && evals > limit * sample.size) {
-        X <- X[1:obs,]
+        X <- X[1:obs, ]
         break
       }
     }
-    return(list(X=X, evals=evals, grads=grads))
+    return(list(X = X, evals = evals, grads = grads))
   }
 
   # Fill in attributes of sampler and return it.
 
-  attr(sampler, 'name') <- name
+  attr(sampler, "name") <- name
   if (!is.null(name.expr))
-    attr(sampler, 'name.expr') <- name.expr
+    attr(sampler, "name.expr") <- name.expr
   return(sampler)
 }

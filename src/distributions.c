@@ -9,6 +9,7 @@
 #include <math.h>
 
 #include "../inst/include/SamplerCompare.h"
+#include "init.h"
 
 log_density_t Gauss2_log_dens, cone_log_dens;
 
@@ -40,7 +41,7 @@ double Gauss2_log_dens(dist_t *dist, double *x,
   double z1 = x[1] - mu2;
 
   double y = -1.83787706640935 - 0.5 * log(det)
-    - 0.5 * (z0*z0 - 2 * rho * z0 * z1 + z1*z1) / det; 
+    - 0.5 * (z0*z0 - 2 * rho * z0 * z1 + z1*z1) / det;
   if (compute_grad) {
     grad[0] = -1.0/det * z0 + rho / det * z1;
     grad[1] = -1.0/det * z1 + rho / det * z0;

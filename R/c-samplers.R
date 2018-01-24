@@ -36,9 +36,9 @@ wrap.c.sampler <- function(sampler.symbol, sampler.context,
   # Fill in "name" and possibly "name.expression" attributes on the
   # wrapper function.
 
-  attr(sampler, 'name') <- name
+  attr(sampler, "name") <- name
   if (!is.null(name.expression))
-    attr(sampler, 'name.expression') <- name.expression
+    attr(sampler, "name.expression") <- name.expression
 
   return(sampler)
 }
@@ -60,7 +60,8 @@ arms.sample <- wrap.c.sampler("arms_sample", NULL, "ARMS")
 # sample context.
 
 shrinking.rank.sample <- function(target.dist, x0, sample.size,
-                                    tuning=1, downscale=0.95, min.dimension=1) {
+                                  tuning = 1, downscale = 0.95,
+                                  min.dimension = 1) {
   sub <- wrap.c.sampler("transition_sample",
                         list(raw.symbol("sr_draw"), downscale,
                              as.integer(min.dimension)),
@@ -68,17 +69,17 @@ shrinking.rank.sample <- function(target.dist, x0, sample.size,
   sub(target.dist, x0, sample.size, tuning)
 
 }
-attr(shrinking.rank.sample, 'name') <- 'Shrinking Rank'
+attr(shrinking.rank.sample, "name") <- "Shrinking Rank"
 
 # The nonadaptive crumb sampler is implemented as a shrinking rank
 # slice sampler that never shrinks rank.
 
 nonadaptive.crumb.sample <- function(target.dist, x0, sample.size,
-    tuning=1, downscale=0.95) {
+    tuning = 1, downscale = 0.95) {
 
   shrinking.rank.sample(target.dist, x0, sample.size, tuning,
-                        downscale=downscale,
-                        min.dimension=target.dist$ndim)
+                        downscale = downscale,
+                        min.dimension = target.dist$ndim)
 }
 
-attr(nonadaptive.crumb.sample, 'name') <- 'Nonadaptive Crumb'
+attr(nonadaptive.crumb.sample, "name") <- "Nonadaptive Crumb"

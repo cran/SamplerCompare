@@ -9,6 +9,7 @@
 #include <R_ext/Rdynload.h>
 
 #include "../inst/include/SamplerCompare.h"
+#include "init.h"
 
 // structure representing a function passed into a sampler, to be used
 // in a log_density_t.  log_dens_fun is the R function object, envir
@@ -76,7 +77,7 @@ SEXP sampler_glue_R_dist(SEXP sampler, SEXP sampler_context, SEXP log_dens,
     error("sampler is not a character string.");
   sampler_t *sampler_fp =
     (sampler_t*)R_FindSymbol(CHAR(STRING_ELT(sampler,0)), "", NULL);
-  if (sampler_fp==NULL) 
+  if (sampler_fp==NULL)
     error("Cannot locate symbol \"%s\".", CHAR(STRING_ELT(sampler,0)));
 
   // Create a stub for log_dens so that it looks like a C density
@@ -122,7 +123,7 @@ SEXP sampler_glue_R_dist(SEXP sampler, SEXP sampler_context, SEXP log_dens,
 
 static double R_log_density_stub_func(dist_t *ds, double *x,
                                       int compute_grad, double *grad) {
-  SEXP xsexp, fcall, result_sexp, compute_grad_sexp;
+  SEXP xsexp, fcall, result_sexp, compute_grad_sexp, result_names;
 
   R_stub_context_t *stub_context = (R_stub_context_t*)raw_as_void(ds->context);
 
@@ -143,10 +144,11 @@ static double R_log_density_stub_func(dist_t *ds, double *x,
   // variable log_dens and (if appropriate) the memory pointed to by
   // grad.
 
-  if (!isNewList(result_sexp))
+  if (!isNewList(result_sexp)) {
     error("log density function must return a list.");
-  SEXP result_names = getAttrib(result_sexp, R_NamesSymbol);
-  for (int i=0; i<length(result_sexp); i++) {
+  }
+  PROTECT(result_names = getAttrib(result_sexp, R_NamesSymbol));
+  for (int i = 0; i < length(result_sexp); i++) {
     if (!strcmp(CHAR(STRING_ELT(result_names,i)), "log.density")) {
       log_dens = asReal(VECTOR_ELT(result_sexp, i));
       found_log_dens = 1;
@@ -158,7 +160,7 @@ static double R_log_density_stub_func(dist_t *ds, double *x,
     }
   }
 
-  UNPROTECT(4);
+  UNPROTECT(5);
 
   // Throw an error if the log density did not return the appropriate
   // list elements.
@@ -341,7 +343,7 @@ SEXP R_invoked_C_glue(SEXP c_sym, SEXP context, SEXP x, SEXP compute_grad) {
     return result;
 
   } else {
-    
+
     // Call the log density function.
 
     double y = log_dens_fn(&ds, REAL(x), 0, NULL);

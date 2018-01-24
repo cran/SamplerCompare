@@ -25,7 +25,7 @@
   approximating the target density.  This implementation attempts
   to provide a simpler interface for users by generating an envelope
   automatically.
-  
+
   To form an initial envelope for coordinate (i), four abscissae
   are needed.  One is \code{x0}.  The sampler tries points
   with abscissae \code{x0[i]-2^k*tuning} and \code{x0[i]+2^k*tuning} for

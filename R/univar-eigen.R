@@ -12,7 +12,7 @@ univar.eigen.sample <- function(target.dist, x0, sample.size,
   beta <- 0.05 # as with Roberts & Rosenthal
   burn.in <- 1
   nthin <- min(ndim, 25)
-  
+
   # Eigendecomposition happens every decomp.freq univariate updates.
   # Never less than ten, and never such that it occurs more than a
   # hundred times in the simulation.
@@ -73,8 +73,8 @@ univar.eigen.sample <- function(target.dist, x0, sample.size,
     L <- -runif(1)
     U <- L + 1
     if (steps.out > 0) {
-      L.y <- target.dist$log.density(x0+v*L) 
-      U.y <- target.dist$log.density(x0+v*U) 
+      L.y <- target.dist$log.density(x0+v*L)
+      U.y <- target.dist$log.density(x0+v*U)
       nevals <- nevals + 2
 
       step <- 0
@@ -82,11 +82,11 @@ univar.eigen.sample <- function(target.dist, x0, sample.size,
         step <- step + 1
         if (runif(1)<0.5) {
           L <- L - 1
-          L.y <- target.dist$log.density(x0+v*L) 
+          L.y <- target.dist$log.density(x0+v*L)
           nevals <- nevals + 1
         } else {
           U <- U + 1
-          U.y <- target.dist$log.density(x0+v*U) 
+          U.y <- target.dist$log.density(x0+v*U)
           nevals <- nevals + 1
         }
       }

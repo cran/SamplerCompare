@@ -51,7 +51,7 @@ cov.match.step <- function(target.dist, x0, y0, tuning=1, theta=0.95) {
     # Draw a proposal, x1, from the posterior for x0.
     # If it is inside the slice, accept it.
 
-    Delta <- backsolve(posterior.R, rnorm(p)) 
+    Delta <- backsolve(posterior.R, rnorm(p))
     x1 <- Delta + posterior.mean + x0          # proposal
     evals <- evals + 1
     y1 <- target.dist$log.density(x1)          # log-density at proposal

@@ -50,7 +50,7 @@ not using the R package system, you can do this is with |R CMD SHLIB|
 and |dyn.load|.  Suppose your implementation is in |mycode.c|.
 At the Unix command line, type:
 \begin{verbatim}
-SC_INCLUDE=`echo 'suppressPackageStartupMessages(library(SamplerCompare)) ; 
+SC_INCLUDE=`echo 'suppressPackageStartupMessages(library(SamplerCompare)) ;
   cat(system.file("include", package="SamplerCompare"))' | R --vanilla --slave`
 MAKEFLAGS="CPPFLAGS=-I$SC_INCLUDE" R CMD SHLIB mycode.c
 \end{verbatim}

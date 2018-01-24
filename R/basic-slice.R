@@ -170,7 +170,7 @@ stepout.slice.sample <- function(target.dist, x0, sample.size, tuning=1,
     }
 
     # Having updated each coordinate, save the accepted proposal.
-  
+
     X[obs,] <- x1
 
     # Make sure we haven't run too long.

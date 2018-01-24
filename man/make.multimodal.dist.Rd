@@ -25,7 +25,7 @@
   direction.  The same random seed is temporarily set when drawing
   modes, so every time this function is called with the same parameters,
   the resulting distribution is the same.
-  
+
   This is included as a test case for comparing how MCMC methods
   perform on multimodal distributions.
 }

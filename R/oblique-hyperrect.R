@@ -14,7 +14,7 @@ oblique.hyperrect.sample <- function(target.dist, x0, sample.size, tuning=1,
   nevals <- 0
   beta <- 0.05 # as with Roberts & Rosenthal
   burn.in <- 1
-  
+
   # Eigendecomposition happens every decomp.freq univariate updates.
   # Never less than ten, and never such that it occurs more than a
   # hundred times in the simulation.
@@ -22,7 +22,7 @@ oblique.hyperrect.sample <- function(target.dist, x0, sample.size, tuning=1,
   decomp.freq <- max(floor(sample.size / 100), 10)
 
   # If we're cheating, obtain the covariance from the target distribution.
-  
+
   if (cheat) {
     if (is.null(target.dist$cov))
       return(list(X=X[1,,drop=FALSE], evals=0))

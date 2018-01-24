@@ -20,9 +20,9 @@ export(shrinking.rank.sample, nonadaptive.crumb.sample,
        adaptive.metropolis.sample, univar.eigen.sample,
        cheat.univar.eigen.sample, oblique.hyperrect.sample,
        cheat.oblique.hyperrect.sample)
-       
+
 useDynLib(SamplerCompare, sampler_glue_R_dist, sampler_glue_C_dist)
-useDynLib(SamplerCompare, arms_sample, transition_sample)
+useDynLib(SamplerCompare, arms_sample, transition_sample, sr_draw)
 
 # distributions
 

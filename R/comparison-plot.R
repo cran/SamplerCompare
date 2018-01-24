@@ -39,7 +39,7 @@ comparison.plot <- function(RS, xlab=NULL, ylab=NULL, base_size=10, ...) {
 
   # Next, plot the results with infinite/unknown ACT as question
   # marks at lim, computed to be at the top of the plot.
-  
+
   if (any(!is.finite(RS$act))) {
     RSinf <- subset(RS, !is.finite(RS$act))
     RSinf$lim <- max(RSfinite$evals*RSfinite$act)

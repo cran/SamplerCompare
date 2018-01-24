@@ -12,10 +12,11 @@
 #include <string.h>
 
 #include <R.h>
-#include <Rmath.h>
 #include <R_ext/BLAS.h>
+#include <Rmath.h>
 
 #include "../inst/include/SamplerCompare.h"
+#include "init.h"
 
 // A structure representing an approximate (exact when unimodal)
 // bound on a one dimensional cut through a log density.  There are
@@ -32,9 +33,7 @@ typedef struct {
 // generated from an envelope, and used to represent a piecewise
 // exponential distribution.
 
-typedef struct {
-  double left, right, slope, icept, weight;
-} lineseg_t;
+typedef struct { double left, right, slope, icept, weight; } lineseg_t;
 
 // These functions are documented before their definitions.
 
@@ -43,15 +42,15 @@ static void free_envelope(envelope_t *envelope);
 static void add_to_envelope(envelope_t *envelope, double new_absc,
                             double new_dens);
 static double sample_piecewise_exponential(int nlines, lineseg_t *linesegs,
-                                    int *degen);
+                                           int *degen);
 static double sample_chopped_exponential(lineseg_t *ls);
 static void envelope_segments(envelope_t *envelope, lineseg_t **linesegs_ptr,
-                       int *nlines_ptr);
+                              int *nlines_ptr);
 
 static envelope_t *identify_bounds(dist_t *ds, double *x, int dim, double w);
 
-static inline double min(double a, double b) { return (a<b) ? a : b; }
-static inline double max(double a, double b) { return (a>b) ? a : b; }
+static inline double min(double a, double b) { return (a < b) ? a : b; }
+static inline double max(double a, double b) { return (a > b) ? a : b; }
 
 static void arms_draw(dist_t *ds, double *x0, double *x1,
                       envelope_t **envelopes, int *rejections);
@@ -64,12 +63,11 @@ static void expand_envelope(envelope_t *env, dist_t *ds, double *x0,
                             int which_dim);
 static envelope_t *copy_envelope(envelope_t *env);
 
-static void find_decrease(dist_t *ds, double *x, int dim,
-                          double w, double y, double *xdec, double *ydec);
+static void find_decrease(dist_t *ds, double *x, int dim, double w, double y,
+                          double *xdec, double *ydec);
 
-static void bsearch_function(dist_t *ds, double *x, int dim,
-                             double lower, double upper,
-                             double ylower, double yupper,
+static void bsearch_function(dist_t *ds, double *x, int dim, double lower,
+                             double upper, double ylower, double yupper,
                              double *q, double *y, int upper_bound);
 
 static const int one = 1;  // for BLAS
@@ -78,30 +76,30 @@ static inline void Rassert(int v) {
   if (!v) error("Assertion failed in arms.c.");
 }
 
-void arms_sample(SEXP sampler_context, dist_t *ds, double *x0,
-                 int sample_size, double tuning, double *X_out) {
+void arms_sample(SEXP sampler_context, dist_t *ds, double *x0, int sample_size,
+                 double tuning, double *X_out) {
   // Initialize envelopes
 
-  envelope_t **envelopes = Calloc(ds->ndim, envelope_t*);
-  for (int dim=0; dim<ds->ndim; dim++)
+  envelope_t **envelopes = Calloc(ds->ndim, envelope_t *);
+  for (int dim = 0; dim < ds->ndim; dim++)
     envelopes[dim] = identify_bounds(ds, x0, dim, tuning);
 
   // Use arms_draw sample_size times to draw observations.
-  
+
   double x[ds->ndim];
-  memmove(x, x0, sizeof(double)*ds->ndim);
+  memmove(x, x0, sizeof(double) * ds->ndim);
   int rejections = 0;
 
-  for (int obs=0; obs<sample_size; obs++) {
+  for (int obs = 0; obs < sample_size; obs++) {
     arms_draw(ds, x, x, envelopes, &rejections);
     dcopy_(&ds->ndim, x, &one, &X_out[obs], &sample_size);
   }
 
-  for (int dim=0; dim<ds->ndim; dim++)
+  for (int dim = 0; dim < ds->ndim; dim++) {
     free_envelope(envelopes[dim]);
+  }
   Free(envelopes);
 }
-
 
 // Uses ARMS to draw a single observation from a distribution, ds,
 // starting from state x0.  Stores resulting state in x1.  envelopes
@@ -115,7 +113,7 @@ static void arms_draw(dist_t *ds, double *x0, double *x1,
 
   // Update each coordinate of x0 in turn...
 
-  for (int i=0; i<ds->ndim; i++) {
+  for (int i = 0; i < ds->ndim; i++) {
     envelope_t *E = copy_envelope(envelopes[i]);
     x1[i] = arms_sample1(ds, x1, i, E, rejections);
     free_envelope(E);
@@ -131,15 +129,16 @@ static void arms_draw(dist_t *ds, double *x0, double *x1,
 static double arms_sample1(dist_t *ds, double *x0, int which_dim,
                            envelope_t *envelope, int *rejections) {
   double x1[ds->ndim];
-  memmove(x1, x0, ds->ndim*sizeof(double));
+  memmove(x1, x0, ds->ndim * sizeof(double));
   double y1;
   int nlines;
   lineseg_t *linesegs = NULL;
-  while(1) {
+  while (1) {
     R_CheckUserInterrupt();
 
-    if (linesegs!=NULL)
+    if (linesegs != NULL) {
       Free(linesegs);
+    }
 
     // Ensure the envelope satisfies the slope constraints, transform
     // it into a set of segments, and draw from the implied distribution.
@@ -154,7 +153,7 @@ static double arms_sample1(dist_t *ds, double *x0, int which_dim,
     // envelope.
 
     y1 = ds->log_dens(ds, x1, 0, NULL);
-    if (log(unif_rand())<=y1-eval_segment(nlines, linesegs, x1[which_dim]))
+    if (log(unif_rand()) <= y1 - eval_segment(nlines, linesegs, x1[which_dim]))
       break;
 
     // If the proposed point is rejected, but there is no sign of
@@ -165,29 +164,31 @@ static double arms_sample1(dist_t *ds, double *x0, int which_dim,
     // the same point over and over, which could happen if its points are
     // all deep in sharply decayed tails of a distribution.
 
-    if (R_FINITE(y1) && !degen)
+    if (R_FINITE(y1) && !degen) {
       add_to_envelope(envelope, x1[which_dim], y1);
-    else if (degen) {
+    } else if (degen) {
       double U = unif_rand();
-      x1[which_dim] = U * envelope->absc[0] +
-                      (1-U) * envelope->absc[envelope->nabsc-1];
+      x1[which_dim] =
+          U * envelope->absc[0] + (1 - U) * envelope->absc[envelope->nabsc - 1];
       y1 = ds->log_dens(ds, x1, 0, NULL);
-      if (R_FINITE(y1))
+      if (R_FINITE(y1)) {
         add_to_envelope(envelope, x1[which_dim], y1);
+      }
     }
   }
 
   // Perform a Metropolis-Hastings transition.  This always accepts
   // if the log density is unimodal.
 
-  double y0 = ds->log_dens(ds, x0, 0, NULL); // FIXME: could be memoized
+  double y0 = ds->log_dens(ds, x0, 0, NULL);  // FIXME: could be memoized
   double h0 = eval_segment(nlines, linesegs, x0[which_dim]);
   double h1 = eval_segment(nlines, linesegs, x1[which_dim]);
   Free(linesegs);
 
-  if (log(unif_rand())>min(0, y1+min(y0,h0)-y0-min(y1,h1))) {
-    if (rejections!=NULL)
+  if (log(unif_rand()) > min(0, y1 + min(y0, h0) - y0 - min(y1, h1))) {
+    if (rejections != NULL) {
       (*rejections)++;
+    }
     return x0[which_dim];
   } else {
     return x1[which_dim];
@@ -201,9 +202,9 @@ static envelope_t *copy_envelope(envelope_t *env) {
   envelope_t *env2 = Calloc(1, envelope_t);
   env2->nabsc = env->nabsc;
   env2->absc = Calloc(env2->nabsc, double);
-  memmove(env2->absc, env->absc, sizeof(double)*env2->nabsc);
+  memmove(env2->absc, env->absc, sizeof(double) * env2->nabsc);
   env2->logdens = Calloc(env2->nabsc, double);
-  memmove(env2->logdens, env->logdens, sizeof(double)*env2->nabsc);
+  memmove(env2->logdens, env->logdens, sizeof(double) * env2->nabsc);
   return env2;
 }
 
@@ -227,23 +228,22 @@ static void add_to_envelope(envelope_t *envelope, double new_absc,
   // Grow the abscissae and log density array to accommodate the new
   // coordinates.
 
-  envelope->absc = Realloc(envelope->absc, envelope->nabsc+1, double);
-  envelope->logdens = Realloc(envelope->logdens, envelope->nabsc+1, double);
+  envelope->absc = Realloc(envelope->absc, envelope->nabsc + 1, double);
+  envelope->logdens = Realloc(envelope->logdens, envelope->nabsc + 1, double);
 
   // Loop over the abscissae, searching for the first one larger
   // than the new one.
 
-  for (int i=0; i<envelope->nabsc; i++) {
-    if (new_absc<envelope->absc[i]) {
-
+  for (int i = 0; i < envelope->nabsc; i++) {
+    if (new_absc < envelope->absc[i]) {
       // We found the next larger abscissa; slide the whole array
       // of abscissae and log densities one place to the right,
       // insert the new one at this index, and return.
-      
-      memmove(&envelope->absc[i+1], &envelope->absc[i],
-              sizeof(double)*(envelope->nabsc-i));
-      memmove(&envelope->logdens[i+1], &envelope->logdens[i],
-              sizeof(double)*(envelope->nabsc-i));
+
+      memmove(&envelope->absc[i + 1], &envelope->absc[i],
+              sizeof(double) * (envelope->nabsc - i));
+      memmove(&envelope->logdens[i + 1], &envelope->logdens[i],
+              sizeof(double) * (envelope->nabsc - i));
       envelope->absc[i] = new_absc;
       envelope->logdens[i] = new_dens;
       envelope->nabsc++;
@@ -268,18 +268,18 @@ static void add_to_envelope(envelope_t *envelope, double new_absc,
 
 static double sample_piecewise_exponential(int nlines, lineseg_t *linesegs,
                                            int *degen) {
-  if (degen!=NULL)
+  if (degen != NULL) {
     *degen = 0;
-  
+  }
+
   // Draw a uniform variate.  Iterate through line segments,
   // subtracting the weight of that segment off U until U is less than
   // the current segment's weight.  This chooses a segment randomly
   // with weight proportionally to its weight field.
 
   double U = unif_rand();
-  for (int i=0; i<nlines; i++) {
+  for (int i = 0; i < nlines; i++) {
     if (U < linesegs[i].weight) {
-
       // Segment i chosen, draw a variate from that segment.
 
       double x = sample_chopped_exponential(&linesegs[i]);
@@ -289,11 +289,12 @@ static double sample_piecewise_exponential(int nlines, lineseg_t *linesegs,
       // and should not make the envelope even finer than it already
       // is, so set degen to one.
 
-      double scale = linesegs[i].right-linesegs[i].left;
-      if (((x-linesegs[i].left)/scale < 1e-5 ||
-           (linesegs[i].right-x)/scale < 1e-5) &&
-          degen!=NULL)
+      double scale = linesegs[i].right - linesegs[i].left;
+      if (((x - linesegs[i].left) / scale < 1e-5 ||
+           (linesegs[i].right - x) / scale < 1e-5) &&
+          degen != NULL) {
         *degen = 1;
+      }
 
       return x;
     } else {
@@ -318,12 +319,13 @@ static double sample_chopped_exponential(lineseg_t *ls) {
   double l = ls->left;
   double r = ls->right;
   double U = unif_rand();
-  Rassert(R_FINITE(m) && R_FINITE(b) && l<r);
+  Rassert(R_FINITE(m) && R_FINITE(b) && l < r);
 
-  if (!R_FINITE(1/m))
-    return (1-U)*l + U*r;
+  if (!R_FINITE(1 / m)) {
+    return (1 - U) * l + U * r;
+  }
 
-  double X = ( logspace_add(m*l+b+log(1-U), m*r+b+log(U)) - b ) / m;
+  double X = (logspace_add(m * l + b + log(1 - U), m * r + b + log(U)) - b) / m;
   Rassert(R_FINITE(X));
   return X;
 }
@@ -344,10 +346,10 @@ static void envelope_segments(envelope_t *envelope, lineseg_t **linesegs_ptr,
   // the first two must slope up, and the segment connecting the last
   // two must slope down.
 
-  Rassert(envelope->nabsc>=4);
+  Rassert(envelope->nabsc >= 4);
   Rassert(envelope->logdens[0] < envelope->logdens[1]);
-  Rassert(envelope->logdens[envelope->nabsc-1]
-           < envelope->logdens[envelope->nabsc-2]);
+  Rassert(envelope->logdens[envelope->nabsc - 1] <
+          envelope->logdens[envelope->nabsc - 2]);
 
   // The first two segments must be special cased.  The first extends
   // the line connecting the first two points from -Inf to the first
@@ -357,7 +359,7 @@ static void envelope_segments(envelope_t *envelope, lineseg_t **linesegs_ptr,
   // from the left of the first.
 
   // allocate max. possible # of segments
-  lineseg_t *linesegs = Calloc(2*envelope->nabsc, lineseg_t);
+  lineseg_t *linesegs = Calloc(2 * envelope->nabsc, lineseg_t);
   int nlines = 0;
 
   nlines = 2;
@@ -376,40 +378,42 @@ static void envelope_segments(envelope_t *envelope, lineseg_t **linesegs_ptr,
   // (absc[i],absc[i+1]), then we just need that segment.  If they
   // intersect over that interval, we need parts of both segments.
 
-  for (int i=1; i<=envelope->nabsc-3; i++) {
+  for (int i = 1; i <= envelope->nabsc - 3; i++) {
     double m1, b1, m2, b2;
     double left = envelope->absc[i];
-    double right = envelope->absc[i+1];
-    if (left==right)
+    double right = envelope->absc[i + 1];
+    if (left == right) {
       continue;
-    envelope_line(envelope, i-1, &m1, &b1);
-    envelope_line(envelope, i+1, &m2, &b2);
+    }
+    envelope_line(envelope, i - 1, &m1, &b1);
+    envelope_line(envelope, i + 1, &m2, &b2);
     double midpt = line_intersection(m1, b1, m2, b2);
-    if (!R_FINITE(midpt))
-      midpt = (right+left)/2;
-    Rassert(left<right);
+    if (!R_FINITE(midpt)) {
+      midpt = (right + left) / 2;
+    }
+    Rassert(left < right);
     Rassert((R_FINITE(m1) && R_FINITE(b1)) || (R_FINITE(m2) && R_FINITE(b2)));
 
     // If the two lines intersect anywhere to the right of the left side of
     // the interval, we need the segment extended from points i-1 and i.
 
-    if (midpt>left || !R_FINITE(m2) || !R_FINITE(b2)) {
+    if (midpt > left || !R_FINITE(m2) || !R_FINITE(b2)) {
       nlines++;
-      linesegs[nlines-1].left = left;
-      linesegs[nlines-1].right = min(midpt, right);
-      linesegs[nlines-1].slope = m1;
-      linesegs[nlines-1].icept = b1;
+      linesegs[nlines - 1].left = left;
+      linesegs[nlines - 1].right = min(midpt, right);
+      linesegs[nlines - 1].slope = m1;
+      linesegs[nlines - 1].icept = b1;
     }
 
     // If the two lines intersect anywhere to the left of the right side of
     // the interval, we need the segment extended from points i and i+1.
 
-    if (midpt<right || !R_FINITE(m1) || !R_FINITE(b1)) {
+    if (midpt < right || !R_FINITE(m1) || !R_FINITE(b1)) {
       nlines++;
-      linesegs[nlines-1].left = max(left, midpt);
-      linesegs[nlines-1].right = right;
-      linesegs[nlines-1].slope = m2;
-      linesegs[nlines-1].icept = b2;
+      linesegs[nlines - 1].left = max(left, midpt);
+      linesegs[nlines - 1].right = right;
+      linesegs[nlines - 1].slope = m2;
+      linesegs[nlines - 1].icept = b2;
     }
   }
 
@@ -422,15 +426,15 @@ static void envelope_segments(envelope_t *envelope, lineseg_t **linesegs_ptr,
 
   nlines += 2;
 
-  linesegs[nlines-2].left = envelope->absc[envelope->nabsc-2];
-  linesegs[nlines-2].right = envelope->absc[envelope->nabsc-1];
-  envelope_line(envelope, envelope->nabsc-3, &linesegs[nlines-2].slope,
-                &linesegs[nlines-2].icept);
+  linesegs[nlines - 2].left = envelope->absc[envelope->nabsc - 2];
+  linesegs[nlines - 2].right = envelope->absc[envelope->nabsc - 1];
+  envelope_line(envelope, envelope->nabsc - 3, &linesegs[nlines - 2].slope,
+                &linesegs[nlines - 2].icept);
 
-  linesegs[nlines-1].left = envelope->absc[envelope->nabsc-1];
-  linesegs[nlines-1].right = R_PosInf;
-  envelope_line(envelope, envelope->nabsc-2, &linesegs[nlines-1].slope,
-                &linesegs[nlines-1].icept);
+  linesegs[nlines - 1].left = envelope->absc[envelope->nabsc - 1];
+  linesegs[nlines - 1].right = R_PosInf;
+  envelope_line(envelope, envelope->nabsc - 2, &linesegs[nlines - 1].slope,
+                &linesegs[nlines - 1].icept);
 
   // Fill in weights.  Each line segment represents the log-density
   // of a piecewise-exponential distribution, with weight proportional
@@ -442,19 +446,18 @@ static void envelope_segments(envelope_t *envelope, lineseg_t **linesegs_ptr,
   // integrals in the weight field of the envelope.
 
   double Z = R_NegInf;
-  for (int j=0; j<nlines; j++) {
-
+  for (int j = 0; j < nlines; j++) {
     // Make sure the first and last segments extend to -Inf and +Inf.
 
-    if (j==0) {
-      Rassert(linesegs[j].left==R_NegInf);
-      Rassert(linesegs[j].slope>0);
+    if (j == 0) {
+      Rassert(linesegs[j].left == R_NegInf);
+      Rassert(linesegs[j].slope > 0);
     } else {
-      Rassert(linesegs[j].left==linesegs[j-1].right);
+      Rassert(linesegs[j].left == linesegs[j - 1].right);
     }
-    if (j==nlines-1) {
-      Rassert(linesegs[j].right==R_PosInf);
-      Rassert(linesegs[j].slope<0);
+    if (j == nlines - 1) {
+      Rassert(linesegs[j].right == R_PosInf);
+      Rassert(linesegs[j].slope < 0);
     }
 
     // Compute the integral of the line segment analytically.  Avoid
@@ -464,15 +467,14 @@ static void envelope_segments(envelope_t *envelope, lineseg_t **linesegs_ptr,
 
     double m = linesegs[j].slope;
     double b = linesegs[j].icept;
-    if (m>0) {
-      linesegs[j].weight = logspace_sub(
-	m*linesegs[j].right+b-log(m), m*linesegs[j].left+b-log(m));
-    } else if (m<0) {
-      linesegs[j].weight = logspace_sub(
-	m*linesegs[j].left+b-log(-m), m*linesegs[j].right+b-log(-m));
-    } else if (m==0) {
-      linesegs[j].weight =
-        b + log(linesegs[j].right - linesegs[j].left);
+    if (m > 0) {
+      linesegs[j].weight = logspace_sub(m * linesegs[j].right + b - log(m),
+                                        m * linesegs[j].left + b - log(m));
+    } else if (m < 0) {
+      linesegs[j].weight = logspace_sub(m * linesegs[j].left + b - log(-m),
+                                        m * linesegs[j].right + b - log(-m));
+    } else if (m == 0) {
+      linesegs[j].weight = b + log(linesegs[j].right - linesegs[j].left);
     } else {
       error("non-finite slope, this should be unreachable");
       linesegs[j].weight = 0;
@@ -485,10 +487,10 @@ static void envelope_segments(envelope_t *envelope, lineseg_t **linesegs_ptr,
   // Divide (in log space, subtract) each weight by the normalizing
   // constant so that the weights add up to one.
 
-  for (int j=0; j<nlines; j++) {
+  for (int j = 0; j < nlines; j++) {
     linesegs[j].weight = exp(linesegs[j].weight - Z);
-    Rassert(linesegs[j].weight>=0);
-    Rassert(linesegs[j].weight<=1.0);
+    Rassert(linesegs[j].weight >= 0);
+    Rassert(linesegs[j].weight <= 1.0);
   }
 
   // Fill in the return values.
@@ -502,13 +504,13 @@ static void envelope_segments(envelope_t *envelope, lineseg_t **linesegs_ptr,
 // the same value, returns a horizontal line.
 
 static void envelope_line(envelope_t *envelope, int i, double *m, double *b) {
-  Rassert(i>=0 && i<envelope->nabsc-1);
-  if (envelope->absc[i+1]==envelope->absc[i]) {
+  Rassert(i >= 0 && i < envelope->nabsc - 1);
+  if (envelope->absc[i + 1] == envelope->absc[i]) {
     *m = 0;
     *b = envelope->logdens[i];
   } else {
-    *m = ( envelope->logdens[i+1] - envelope->logdens[i] ) /
-         ( envelope->absc[i+1] - envelope->absc[i] );
+    *m = (envelope->logdens[i + 1] - envelope->logdens[i]) /
+         (envelope->absc[i + 1] - envelope->absc[i]);
     *b = envelope->logdens[i] - (*m) * envelope->absc[i];
   }
   Rassert(R_FINITE(*m) && R_FINITE(*b));
@@ -520,7 +522,7 @@ static void envelope_line(envelope_t *envelope, int i, double *m, double *b) {
 //   y = m2 * x + b2
 
 static double line_intersection(double m1, double b1, double m2, double b2) {
-  return (b2-b1)/(m1-m2);
+  return (b2 - b1) / (m1 - m2);
 }
 
 // Given a connected sequence of line segments, find the y value at
@@ -529,8 +531,8 @@ static double line_intersection(double m1, double b1, double m2, double b2) {
 // the previous one's right, so that the sequence is connected.
 
 double eval_segment(int nlines, lineseg_t *linesegs, double x) {
-  for (int i=0; i<nlines; i++) {
-    if (x<=linesegs[i].right && x>=linesegs[i].left)
+  for (int i = 0; i < nlines; i++) {
+    if (x <= linesegs[i].right && x >= linesegs[i].left)
       return linesegs[i].slope * x + linesegs[i].icept;
   }
   Rassert(0);
@@ -548,7 +550,7 @@ static void expand_envelope(envelope_t *env, dist_t *ds, double *x0,
   // Copy x0 into x, a scratch state.
 
   double x[ds->ndim];
-  memmove(x, x0, sizeof(double)*ds->ndim);
+  memmove(x, x0, sizeof(double) * ds->ndim);
 
   // If the first line is positively sloped, use find_decrease to
   // find an ordinate where the density is lower than the second point.
@@ -559,35 +561,35 @@ static void expand_envelope(envelope_t *env, dist_t *ds, double *x0,
   if (!(env->logdens[1] > env->logdens[0])) {
     x[which_dim] = env->absc[1];
     double w = env->absc[1] - env->absc[0];
-    find_decrease(ds, x, which_dim, -w, env->logdens[1],
-		  &env->absc[0], &env->logdens[0]);
-    if (!R_FINITE(env->logdens[0]))
+    find_decrease(ds, x, which_dim, -w, env->logdens[1], &env->absc[0],
+                  &env->logdens[0]);
+    if (!R_FINITE(env->logdens[0])) {
       bsearch_function(ds, x, which_dim, env->absc[0], env->absc[1],
-		       env->logdens[0], env->logdens[1],
-		       &env->absc[0], &env->logdens[0], 1);
+                       env->logdens[0], env->logdens[1], &env->absc[0],
+                       &env->logdens[0], 1);
+    }
   }
 
   // Repeat the previous procedure, this time ensuring the last line
   // is negatively sloped.
 
-  if (!(env->logdens[env->nabsc-2]>env->logdens[env->nabsc-1])) {
-    x[which_dim] = env->absc[env->nabsc-2];
-    double w = env->absc[env->nabsc-1] - env->absc[env->nabsc-2];
-    find_decrease(ds, x, which_dim, w, env->logdens[env->nabsc-2],
-		  &env->absc[env->nabsc-1], &env->logdens[env->nabsc-1]);
-    if (!R_FINITE(env->logdens[env->nabsc-1]))
-      bsearch_function(ds, x, which_dim, env->absc[env->nabsc-2],
-		       env->absc[env->nabsc-1],
-		       env->logdens[env->nabsc-2],
-		       env->logdens[env->nabsc-1],
-		       &env->absc[env->nabsc-1],
-		       &env->logdens[env->nabsc-1], 1);
+  if (!(env->logdens[env->nabsc - 2] > env->logdens[env->nabsc - 1])) {
+    x[which_dim] = env->absc[env->nabsc - 2];
+    double w = env->absc[env->nabsc - 1] - env->absc[env->nabsc - 2];
+    find_decrease(ds, x, which_dim, w, env->logdens[env->nabsc - 2],
+                  &env->absc[env->nabsc - 1], &env->logdens[env->nabsc - 1]);
+    if (!R_FINITE(env->logdens[env->nabsc - 1])) {
+      bsearch_function(ds, x, which_dim, env->absc[env->nabsc - 2],
+                       env->absc[env->nabsc - 1], env->logdens[env->nabsc - 2],
+                       env->logdens[env->nabsc - 1], &env->absc[env->nabsc - 1],
+                       &env->logdens[env->nabsc - 1], 1);
+    }
   }
 
   Rassert(env->logdens[1] > env->logdens[0]);
-  Rassert(env->logdens[env->nabsc-2]>env->logdens[env->nabsc-1]);
-  Rassert(env->absc[1]>env->absc[0]);
-  Rassert(env->absc[env->nabsc-1]>env->absc[env->nabsc-2]);
+  Rassert(env->logdens[env->nabsc - 2] > env->logdens[env->nabsc - 1]);
+  Rassert(env->absc[1] > env->absc[0]);
+  Rassert(env->absc[env->nabsc - 1] > env->absc[env->nabsc - 2]);
 }
 
 // On a cut through x in dimension dim, construct an initial four
@@ -610,10 +612,13 @@ static envelope_t *identify_bounds(dist_t *ds, double *x, int dim, double w) {
   // If the located points do not have finite log density, use
   // bsearch_function to locate points that do.
 
-  if (!R_FINITE(yleft))
+  if (!R_FINITE(yleft)) {
     bsearch_function(ds, x, dim, xleft, x[dim], yleft, y, &xleft, &yleft, 1);
-  if (!R_FINITE(yright))
-    bsearch_function(ds, x, dim, x[dim], xright, y, yright, &xright, &yright,1);
+  }
+  if (!R_FINITE(yright)) {
+    bsearch_function(ds, x, dim, x[dim], xright, y, yright, &xright, &yright,
+                     1);
+  }
 
   // Allocate an envelope and fill in the first and fourth points.
 
@@ -632,7 +637,7 @@ static envelope_t *identify_bounds(dist_t *ds, double *x, int dim, double w) {
   // [x,xupper] would work.
 
   double xextra, yextra;
-  if (yright<yleft) {
+  if (yright < yleft) {
     env->absc[2] = x[dim];
     env->logdens[2] = y;
     bsearch_function(ds, x, dim, xleft, x[dim], yleft, y, &xextra, &yextra, 0);
@@ -641,7 +646,8 @@ static envelope_t *identify_bounds(dist_t *ds, double *x, int dim, double w) {
   } else {
     env->absc[1] = x[dim];
     env->logdens[1] = y;
-    bsearch_function(ds, x, dim, x[dim], xright, y, yright, &xextra, &yextra,0);
+    bsearch_function(ds, x, dim, x[dim], xright, y, yright, &xextra, &yextra,
+                     0);
     env->absc[2] = xextra;
     env->logdens[2] = yextra;
   }
@@ -659,14 +665,13 @@ static envelope_t *identify_bounds(dist_t *ds, double *x, int dim, double w) {
 // The found ordinate is returned in q, with its log-density in y.
 // This function assumes the log density is continuous.
 
-static void bsearch_function(dist_t *ds, double *x, int dim,
-                             double lower, double upper,
-                             double ylower, double yupper,
+static void bsearch_function(dist_t *ds, double *x, int dim, double lower,
+                             double upper, double ylower, double yupper,
                              double *q, double *y, int upper_bound) {
   // Scratch coordinates
 
   double x1[ds->ndim];
-  memmove(x1, x, sizeof(double)*ds->ndim);
+  memmove(x1, x, sizeof(double) * ds->ndim);
 
   // Fill in ylower and yupper if necessary.
 
@@ -688,12 +693,12 @@ static void bsearch_function(dist_t *ds, double *x, int dim,
   // midpoint.
 
   x1[dim] = 0.5 * upper + 0.5 * lower;
-  Rassert(x1[dim]!=upper && x1[dim]!=lower);
+  Rassert(x1[dim] != upper && x1[dim] != lower);
   double y1 = ds->log_dens(ds, x1, 0, NULL);
   Rassert(!ISNAN(y1));
 
-  if ( (ylower<yupper && ylower<y1 && (!upper_bound || y1<yupper)) ||
-       (ylower>yupper && yupper<y1 && (!upper_bound || y1<ylower)) ) {
+  if ((ylower < yupper && ylower < y1 && (!upper_bound || y1 < yupper)) ||
+      (ylower > yupper && yupper < y1 && (!upper_bound || y1 < ylower))) {
     *q = x1[dim];
     *y = y1;
     return;
@@ -703,12 +708,13 @@ static void bsearch_function(dist_t *ds, double *x, int dim,
   // contain a suitable point if L is continuous.  Pick the appropriate
   // segment and call bsearch_function recursively.
 
-  if ((ylower>yupper && y1<=yupper) || (ylower<yupper && y1>=yupper))
-    bsearch_function(ds, x, dim, lower, x1[dim],
-                     ylower, yupper, q, y, upper_bound);
-  else if ((ylower>yupper && y1>=ylower) || (ylower<yupper && y1<=ylower))
-    bsearch_function(ds, x, dim, x1[dim], upper,
-                     ylower, yupper, q, y, upper_bound);
+  if ((ylower > yupper && y1 <= yupper) || (ylower < yupper && y1 >= yupper))
+    bsearch_function(ds, x, dim, lower, x1[dim], ylower, yupper, q, y,
+                     upper_bound);
+  else if ((ylower > yupper && y1 >= ylower) ||
+           (ylower < yupper && y1 <= ylower))
+    bsearch_function(ds, x, dim, x1[dim], upper, ylower, yupper, q, y,
+                     upper_bound);
   else
     error("non-finite bounds in bsearch_function, should be unreachable");
   return;
@@ -723,12 +729,12 @@ static void bsearch_function(dist_t *ds, double *x, int dim,
 // point; ydec is the log density at that point, so that if x[dim] were
 // set to *xdec, ds->log_dens would compute *ydec.
 
-static void find_decrease(dist_t *ds, double *x, int dim,
-                          double w, double y, double *xdec, double *ydec) {
-  Rassert(y>R_NegInf);
+static void find_decrease(dist_t *ds, double *x, int dim, double w, double y,
+                          double *xdec, double *ydec) {
+  Rassert(y > R_NegInf);
   Rassert(R_FINITE(w));
   double x1[ds->ndim];
-  memmove(x1, x, sizeof(double)*ds->ndim);
+  memmove(x1, x, sizeof(double) * ds->ndim);
   x1[dim] += w;
   double y1 = ds->log_dens(ds, x1, 0, NULL);
   Rassert(!ISNAN(y1));
@@ -737,7 +743,7 @@ static void find_decrease(dist_t *ds, double *x, int dim,
     *ydec = y1;
     return;
   } else {
-    find_decrease(ds, x, dim, 2*w, y, xdec, ydec);
+    find_decrease(ds, x, dim, 2 * w, y, xdec, ydec);
     return;
   }
 }

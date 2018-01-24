@@ -44,7 +44,7 @@ compare.samplers <- function(sample.size, dists, samplers,
   } else {
     completed.lock <- NULL
   }
-  
+
   # Save an empty result set with timing attributes to completed.file.
 
   sampler.comparison <- data.frame()
@@ -72,8 +72,8 @@ compare.samplers <- function(sample.size, dists, samplers,
     results <- parallel::mclapply(1:nrow(jobs), eval.sampler.job.id,
                                   mc.preschedule=FALSE, mc.cores=cores)
   }
-#  RS <- do.call(rbind, lapply(results, data.frame))
-  
+  #  RS <- do.call(rbind, lapply(results, data.frame))
+
   # Load the saved results and return them.  We could use the lapply
   # return value, but this ensures that callers get the same results
   # whether they get them from compare.samplers or completed.file.
@@ -87,7 +87,7 @@ compare.samplers <- function(sample.size, dists, samplers,
 		 attr(sampler.comparison, 'elapsed.time')))
   if (trace && !unlink.completed.file)
     cat(sprintf('Wrote results to %s.\n', completed.file))
-	 
+
   return(sampler.comparison)
 }
 
@@ -135,7 +135,7 @@ eval.sampler <- function(dist, sampler, sample.size, tuning.param,
 
   if (trace)
     cat(sprintf('%s %s: %.3g (%.3g,%.3g) evals tuning=%.3g%s; act.y=%.3g\n',
-                dist$name, attr(sampler,'name'), rv$act * rv$evals, 
+                dist$name, attr(sampler,'name'), rv$act * rv$evals,
                 rv$act.025 * rv$evals, rv$act.975 * rv$evals,
                 tuning.param, ifelse(rv$aborted, ' (aborted)', ''), rv$act.y))
 
@@ -171,7 +171,7 @@ eval.sampler <- function(dist, sampler, sample.size, tuning.param,
 
   return(rv)
 }
-   
+
 simulation.result <- function(target.dist, sampler.name, X,
     evals=NULL, grads=NULL, tuning=NULL, cpu=NULL, burn.in=0.2, y=NULL,
     sampler.expr=sprintf("plain('%s')", sampler.name),
@@ -180,7 +180,7 @@ simulation.result <- function(target.dist, sampler.name, X,
   # Cast X to a matrix.  Necessary when it is an mcmc object from coda.
 
   X <- as.matrix(X)
-  
+
   # Check and chop off burn-in segments of chains.
 
   stopifnot(target.dist$ndim==ncol(X))
@@ -233,6 +233,6 @@ simulation.result <- function(target.dist, sampler.name, X,
 
   # Return data as a data frame with strings for factors so rbind
   # works as expected.
-  
+
   return(as.data.frame(rv, stringsAsFactors=FALSE))
 }

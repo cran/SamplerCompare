@@ -31,7 +31,7 @@ nograd.hyperrectangle.sample(...)
 \details{
   \code{hyperrectangle.sample} implements multivariate slice sampling
   with hyperrectangles as described in Neal (sec. 5.1, 2003).
-  
+
   If \code{use.gradient} is set, when a proposal is rejected, the
   gradient at the rejected proposal is used to choose a direction
   to shrink the box.  Neal suggested shrinking in the direction the
@@ -48,7 +48,7 @@ nograd.hyperrectangle.sample(...)
 }
 
 \value{
-  A list with elements \code{X}, \code{evals}, and \code{grads}.  
+  A list with elements \code{X}, \code{evals}, and \code{grads}.
   This sampler follows the calling convention of
   \code{\link{compare.samplers}}.
 }

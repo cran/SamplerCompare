@@ -39,7 +39,7 @@
   to the third, and so on.  The state returned by the final transition
   function is taken to be the state of the chain as a whole at the
   end of the iteration.
-  
+
   This way, transition functions that provide complementary features,
   such as fast mixing in different coordinates, can be combined
   without modifying their internal structure.  The \code{transition_fn}

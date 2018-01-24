@@ -44,7 +44,7 @@ typedef struct {
   \code{c.log.density}, the \code{context} element is a \code{SEXP}
   containing the \code{c.context} parameter, and \code{ndim} is the
   \code{ndim} parameter to \code{make.c.dist}.
-  
+
   The \code{x} parameter is an \code{ndim}-long array of doubles
   containing the location at which to evaluate the log-density,
   which the \code{log_density_t} should return.

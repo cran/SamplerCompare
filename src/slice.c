@@ -10,6 +10,7 @@
 #include <R_ext/BLAS.h>
 
 #include "../inst/include/SamplerCompare.h"
+#include "init.h"
 
 static void projv(double *J, int ncol, int nrow, double *v);
 

@@ -23,7 +23,7 @@ univar.metropolis.sample(target.dist, x0, sample.size, tuning=1)
   \code{tuning} parameter.  \code{univar.metropolis.sample} updates
   each coordinate in sequence using univariate Gaussian proposals
   with standard deviation equal to the \code{tuning} parameter.
-  
+
   So that these two functions are roughly comparable, with a
   \eqn{p}-dimensional target distribution,
   \code{multivariate.metropolis.sample} performs \eqn{p} accept-reject
