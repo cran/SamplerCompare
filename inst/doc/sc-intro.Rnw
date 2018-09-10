@@ -41,11 +41,8 @@
 
 \Address{
   Madeleine B. Thompson\\
-  Dept.\ of Statistics, University of Toronto \\
-  100 St.\ George Street Room 6022 \\
-  Toronto, Ontario, M5S 3G3, Canada \\
-  E-mail: \email{mthompson@utstat.toronto.edu}\\
-  URL: \url{http://www.utstat.toronto.edu/mthompson}
+  E-mail: \email{madeleineth@gmail.com}\\
+  URL: \url{https://mdln.net}
 }
 
 \SweaveOpts{eval=TRUE}
@@ -238,12 +235,6 @@ the corresponding line from the \code{compare.samplers} trace output
 \texttt{tuning=1}).  See the \proglang{R} help page for
 \code{sampler.comparison} for a full list of the columns of its return
 value.
-
-The returned data is also incrementally saved to the file named by
-\code{completed.file}.  It can be loaded in a second \proglang{R} process
-with \code{load} to see how the simulation is progressing.  If unset, a
-temporary file is created for this purpose and deleted on successful
-completion of the simulation.
 
 \section{Visualizing results}
 \label{visualizing}

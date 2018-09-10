@@ -1,7 +1,7 @@
 ### R code from vignette source 'sc-intro.Rnw'
 
 ###################################################
-### code chunk number 1: sc-intro.Rnw:55-70
+### code chunk number 1: sc-intro.Rnw:52-67
 ###################################################
 dir.create('Figures', showWarnings=FALSE)
 capture.output(source('Code/ex-compare-samplers.Rfrag'),

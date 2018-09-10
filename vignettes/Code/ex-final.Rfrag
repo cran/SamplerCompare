@@ -1,1 +1,1 @@
-sim <- metropolis.sample(beta23.dist, x0=0.5, sample.size=100, tuning=1)
+sim <- metropolis.sample(beta23.dist, x0 = 0.5, sample.size = 100, tuning = 1)

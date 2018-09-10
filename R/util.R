@@ -6,9 +6,9 @@
 # Read http://en.wikipedia.org/wiki/Hypersphere for more.
 
 rsphere <- function(n,p) {
-  r <- runif(n)^(1/p)
-  x <- array(rnorm(n*p), c(n,p))
-  x <- x / sqrt(rowSums(x^2)) * r
+  r <- runif(n) ^ (1 / p)
+  x <- array(rnorm(n * p), c(n, p))
+  x <- x / sqrt(rowSums(x ^ 2)) * r
   return(x)
 }
 
@@ -17,12 +17,12 @@ rsphere <- function(n,p) {
 
 logsumexp <- function(x) {
   m <- max(x)
-  if (is.na(m) || m==-Inf)
+  if (is.na(m) || m == -Inf) {
     return(m)
-  return(m+log(sum(exp(x-m))))
+  }
+  return(m + log(sum(exp(x - m))))
 }
 
 # Returns the two-norm of the argument vector.  Another function I
 # use all the time.
-
-twonorm <- function(x) sqrt(sum(x^2))
+twonorm <- function(x) sqrt(sum(x ^ 2))

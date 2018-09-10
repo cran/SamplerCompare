@@ -1,3 +1,4 @@
-beta23.log.dens <- function(x) ifelse(x<0 | x>1, -Inf, log(x) + 2*log(1-x))
-beta23.dist <- make.dist(ndim=1, name='Beta(2,3)',
-                         log.density=beta23.log.dens, mean=2/(2+3))
+beta23.log.dens <-
+    function(x) ifelse(x < 0 | x > 1, -Inf, log(x) + 2 * log(1 - x))
+beta23.dist <- make.dist(ndim = 1, name = "Beta(2,3)",
+                         log.density = beta23.log.dens, mean = 2 / (2 + 3))

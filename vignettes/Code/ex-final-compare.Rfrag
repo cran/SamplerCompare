@@ -1,7 +1,8 @@
-sampler.comparison <- compare.samplers(sample.size=1000,
-                                       dists=list(beta23.dist),
-                                       samplers=list(metropolis.sample),
-                                       tuning=c(0.1,1,10),
-                                       trace=FALSE)
-print(subset(sampler.comparison,
-  select=c('dist','sampler','tuning','act','evals','cpu','err')))
+sampler.comparison <- compare.samplers(sample.size = 1000,
+                                       dists = list(beta23.dist),
+                                       samplers = list(metropolis.sample),
+                                       tuning = c(0.1, 1, 10),
+                                       trace = FALSE)
+print(subset(
+    sampler.comparison,
+    select = c("dist", "sampler", "tuning", "act", "evals", "cpu", "err")))
