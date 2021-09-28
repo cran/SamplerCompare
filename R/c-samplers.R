@@ -5,14 +5,14 @@
 # function and the vignette "R/C Glue in SamplerCompare" (doc/glue.pdf).
 
 wrap.c.sampler <- function(sampler.symbol, sampler.context,
-                           name, name.expression=NULL) {
-  stopifnot(is.character(sampler.symbol) && length(sampler.symbol)==1)
+                           name, name.expression = NULL) {
+  stopifnot(is.character(sampler.symbol) && length(sampler.symbol) == 1)
 
   # Define the wrapper function.
 
   sampler <- function(target.dist, x0, sample.size, tuning=1) {
-    stopifnot(target.dist$ndim==length(x0))
-    stopifnot(is.numeric(tuning) && length(tuning)==1)
+    stopifnot(target.dist$ndim == length(x0))
+    stopifnot(is.numeric(tuning) && length(tuning) == 1)
 
     # If the target distribution's log density function is written
     # in R, indicated by the absence of the c.log.density.and.grad
@@ -74,8 +74,8 @@ attr(shrinking.rank.sample, "name") <- "Shrinking Rank"
 # The nonadaptive crumb sampler is implemented as a shrinking rank
 # slice sampler that never shrinks rank.
 
-nonadaptive.crumb.sample <- function(target.dist, x0, sample.size,
-    tuning = 1, downscale = 0.95) {
+nonadaptive.crumb.sample <- function(
+    target.dist, x0, sample.size, tuning = 1, downscale = 0.95) {
 
   shrinking.rank.sample(target.dist, x0, sample.size, tuning,
                         downscale = downscale,

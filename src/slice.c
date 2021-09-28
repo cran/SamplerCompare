@@ -6,8 +6,11 @@
 // distribution invariant.  This same abstraction is used by several
 // other samplers that are not a part of the SamplerCompare package.
 
+#define USE_FC_LEN_T
+
 #include <R.h>
 #include <R_ext/BLAS.h>
+#include <Rversion.h>
 
 #include "../inst/include/SamplerCompare.h"
 #include "init.h"
@@ -26,19 +29,19 @@ transition_fn sr_draw;
 // "The Transition Function API" in the "glue" vignette for more
 // information.
 
-void transition_sample(SEXP context, dist_t *ds, double *x0,
-                       int sample_size, double tuning, double *X_out) {
-
+void transition_sample(SEXP context, dist_t *ds, double *x0, int sample_size,
+                       double tuning, double *X_out) {
   // Extract the transition function.
 
   transition_fn *T = NULL;
-  if (TYPEOF(context)==RAWSXP)
-    T = *(transition_fn**)RAW(context);
-  else if (isNewList(context) && TYPEOF(VECTOR_ELT(context,0))==RAWSXP)
-    T = *(transition_fn**)RAW(VECTOR_ELT(context, 0));
+  if (TYPEOF(context) == RAWSXP)
+    T = *(transition_fn **)RAW(context);
+  else if (isNewList(context) && TYPEOF(VECTOR_ELT(context, 0)) == RAWSXP)
+    T = *(transition_fn **)RAW(VECTOR_ELT(context, 0));
   else
-    error("transition_sample context must be either a raw function pointer "
-          "or a list with a raw function pointer as its first element\n");
+    error(
+        "transition_sample context must be either a raw function pointer "
+        "or a list with a raw function pointer as its first element\n");
 
   // Copy the initial state to x and X_out.
 
@@ -50,12 +53,12 @@ void transition_sample(SEXP context, dist_t *ds, double *x0,
   // Call the transition function sample_size times, storing the
   // resulting state in X_out after each call.
 
-  for (int obs=1; obs<sample_size; obs++) {
+  for (int obs = 1; obs < sample_size; obs++) {
     R_CheckUserInterrupt();
     double x1[ds->ndim];
     T(context, ds, x, tuning, x1);
     dcopy_(&ds->ndim, x1, &one, x, &one);
-    dcopy_(&ds->ndim, x1, &one, X_out+obs, &sample_size);
+    dcopy_(&ds->ndim, x1, &one, X_out + obs, &sample_size);
   }
 }
 
@@ -75,9 +78,8 @@ void transition_sample(SEXP context, dist_t *ds, double *x0,
 // See the R help (?shrinking.rank.sample) for more information on
 // the algorithm itself.
 
-void sr_draw(SEXP sampler_context, dist_t *ds, double *x0,
-             double sigma_c, double *x1) {
-
+void sr_draw(SEXP sampler_context, dist_t *ds, double *x0, double sigma_c,
+             double *x1) {
   // Identify a scaling factor and minimum dimension.
 
   double downscale = 0.95;
@@ -86,12 +88,13 @@ void sr_draw(SEXP sampler_context, dist_t *ds, double *x0,
     downscale = *REAL(VECTOR_ELT(sampler_context, 1));
     min_dim = *INTEGER(VECTOR_ELT(sampler_context, 2));
   }
-  if (!(downscale>0) || !(downscale<=1))
+  if (!(downscale > 0) || !(downscale <= 1)) {
     error("invalid scaling factor: %.3g", downscale);
+  }
 
   // Choose a slice level.
 
-  double y_slice = ds->log_dens(ds, x0, 0, NULL) - exp_rand(); // slice level
+  double y_slice = ds->log_dens(ds, x0, 0, NULL) - exp_rand();  // slice level
 
   // J needs to be allocated dynamically since many calls to
   // sr_draw may occur between times control returns to R and
@@ -116,21 +119,22 @@ void sr_draw(SEXP sampler_context, dist_t *ds, double *x0,
 
   double sigma_ck = sigma_c;
 
-  while(1) {
+  while (1) {
     // Draw a new crumb, c, with standard deviation sigma_ck.  Like
     // cbar, the crumb is stored relative to x0.
 
     ncrumb++;
     double c[ds->ndim];
-    for (int i=0; i<ds->ndim; i++)
+    for (int i = 0; i < ds->ndim; i++) {
       c[i] = norm_rand();
+    }
     dscal_(&ds->ndim, &sigma_ck, c, &one);
 
     // Update cbar and prec_cbar to reflect the newly drawn crumb.
     // cbar takes the value cbar+c/sigma_ck^2, and prec_cbar increases
     // sigma_ck^(-2).
 
-    double prec_c = 1.0/(sigma_ck*sigma_ck);
+    double prec_c = 1.0 / (sigma_ck * sigma_ck);
     daxpy_(&ds->ndim, &prec_c, c, &one, cbar, &one);
     prec_cbar = prec_cbar + prec_c;
 
@@ -141,11 +145,12 @@ void sr_draw(SEXP sampler_context, dist_t *ds, double *x0,
     // x0 + projv(J, cbar/prec_cbar) is the posterior mean of x0, and
     // 1/sqrt(prec_cbar) is its posterior variance, given the crumbs.
 
-    for (int i=0; i<ds->ndim; i++)
+    for (int i = 0; i < ds->ndim; i++) {
       x1[i] = norm_rand();
-    double scale = 1.0/sqrt(prec_cbar);
+    }
+    double scale = 1.0 / sqrt(prec_cbar);
     dscal_(&ds->ndim, &scale, x1, &one);
-    scale = 1.0/prec_cbar;
+    scale = 1.0 / prec_cbar;
     daxpy_(&ds->ndim, &scale, cbar, &one, x1, &one);
     projv(J, ncol_J, ds->ndim, x1);
     daxpy_(&ds->ndim, &d_one, x0, &one, x1, &one);
@@ -154,8 +159,9 @@ void sr_draw(SEXP sampler_context, dist_t *ds, double *x0,
 
     double grad[ds->ndim], y1;
     y1 = ds->log_dens(ds, x1, 1, grad);
-    if (y1 >= y_slice)
+    if (y1 >= y_slice) {
       break;
+    }
 
     // If we are outside the support of the distribution, our
     // proposal distribution is probably much too large.  Shrink by
@@ -178,7 +184,7 @@ void sr_draw(SEXP sampler_context, dist_t *ds, double *x0,
     // the gradient into the nullspace of J and normalizing it.
 
     projv(J, ncol_J, ds->ndim, grad);
-    double inv_normg = 1.0/dnrm2_(&ds->ndim, grad, &one);
+    double inv_normg = 1.0 / dnrm2_(&ds->ndim, grad, &one);
     dscal_(&ds->ndim, &inv_normg, grad, &one);
 
     // Compute angle of projected gradient with the gradient.  If
@@ -189,18 +195,19 @@ void sr_draw(SEXP sampler_context, dist_t *ds, double *x0,
     // standard deviation.
 
     double cos_theta = ddot_(&ds->ndim, grad, &one, grad, &one) /
-      dnrm2_(&ds->ndim, grad, &one);
+                       dnrm2_(&ds->ndim, grad, &one);
     if (cos_theta > 0.5) {
-      J = Realloc(J, ds->ndim*(ncol_J+1), double);
-      dcopy_(&ds->ndim, grad, &one, J+(ds->ndim)*ncol_J, &one);
+      J = Realloc(J, ds->ndim * (ncol_J + 1), double);
+      dcopy_(&ds->ndim, grad, &one, J + (ds->ndim) * ncol_J, &one);
       ncol_J++;
     } else {
       sigma_ck = downscale * sigma_ck;
     }
   }
 
-  if (J!=NULL)
+  if (J != NULL) {
     Free(J);
+  }
 }
 
 // Project the vector v into the nullspace of the matrix J.  J is
@@ -214,11 +221,17 @@ void sr_draw(SEXP sampler_context, dist_t *ds, double *x0,
 // If J has no columns, this function does nothing.
 
 static void projv(double *J, int ncol, int nrow, double *v) {
-  if (ncol==0)
+  if (ncol == 0) {
     return;
+  }
   double v2[ncol], d_zero = 0.0, d_one = 1.0, d_minus_one = -1.0;
   const int one = 1, zero = 0;
   dcopy_(&ncol, &d_zero, &zero, v2, &one);
+#if R_VERSION < R_Version(3, 6, 2)
   dgemv_("t", &nrow, &ncol, &d_one, J, &nrow, v, &one, &d_zero, v2, &one);
   dgemv_("n", &nrow, &ncol, &d_minus_one, J, &nrow, v2, &one, &d_one, v, &one);
+#else
+  dgemv_("t", &nrow, &ncol, &d_one, J, &nrow, v, &one, &d_zero, v2, &one, 1 /* length of "t" */);
+  dgemv_("n", &nrow, &ncol, &d_minus_one, J, &nrow, v2, &one, &d_one, v, &one, 1 /* length of "n" */);
+#endif
 }

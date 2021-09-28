@@ -8,12 +8,12 @@ citEntry(entry = "Article",
   volume       = "43",
   number       = "12",
   pages        = "1--10",
-  url          = "http://www.jstatsoft.org/v43/i12/",
+  url          = "https://www.jstatsoft.org/article/view/v043i12",
 
   textVersion  =
   paste("Madeleine B. Thompson (2011).",
         "Introduction to SamplerCompare.",
         "Journal of Statistical Software, 43(12), 1-10.",
-        "URL http://www.jstatsoft.org/v43/i12/.")
+        "URL https://www.jstatsoft.org/v43/i12/.")
 )
 

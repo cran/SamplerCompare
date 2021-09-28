@@ -143,7 +143,7 @@ check.dist.gradient <- function(ds, x, h=1e-7) {
 
   # Check each coordinate.
 
-  for (i in 1:length(x))
+  for (i in seq_along(x))
     check.discrete.gradient(ds$log.density, x, g, i, h)
 }
 
@@ -188,7 +188,7 @@ compounded.sampler <- function(step.functions, name, name.expr = NULL) {
 
       # Take one step with each method.
 
-      for (s in 1:length(step.functions)) {
+      for (s in seq_along(step.functions)) {
         step <- step.functions[[s]](target.dist, step$x, step$y, ...)
         evals <- evals + step$evals
         grads <- grads + step$grads

@@ -2,7 +2,7 @@
 
 # compare-samplers.R contains compare.samplers and its support
 # function eval.sampler, which runs an individual simulation.
-# See "Graphical Comparison of MCMC Samplers" (http://arxiv.org/abs/1011.4457)
+# See "Graphical Comparison of MCMC Samplers" (https://arxiv.org/abs/1011.4457)
 # for discussion of the figures of merit used here.
 
 # compare.samplers is the main entry point for the SamplerCompare
@@ -21,8 +21,8 @@ compare.samplers <- function(sample.size, dists, samplers,
   }
 
   # Set up a data frame with a row for each simulation to run.
-  jobs <- expand.grid(sampler.id = 1:length(samplers),
-                      dist.id = 1:length(dists), tuning = tuning)
+  jobs <- expand.grid(sampler.id = seq_along(samplers),
+                      dist.id = seq_along(dists), tuning = tuning)
 
   # Curry out all the parameters that do not vary simulation to simulation.
   eval.sampler.job.id <- function(job.id) {
@@ -34,7 +34,7 @@ compare.samplers <- function(sample.size, dists, samplers,
   }
 
   # Call eval.sampler.job.id on each job id, possibly using multiple cores.
-  results <- parallel::mclapply(1:nrow(jobs), eval.sampler.job.id,
+  results <- parallel::mclapply(seq_len(nrow(jobs)), eval.sampler.job.id,
                                 mc.preschedule = FALSE)
   comparison <- do.call(rbind, results)
   if (trace) {

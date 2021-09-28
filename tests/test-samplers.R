@@ -6,7 +6,7 @@
 # Since this has to run every time the package is checked, the chain
 # length must be short.
 
-library(SamplerCompare)
+library("SamplerCompare")
 
 all.samplers <- list(
   shrinking.rank.sample, nonadaptive.crumb.sample,
@@ -22,7 +22,7 @@ stopifnot(max(results$err) < 1)
 
 # A version of N2weakcor.dist implemented in C.
 N2weakcor.dist.C <- make.c.dist(
-    2, 'Gauss2-C', 'Gauss2_log_dens', c(N2weakcor.dist$mean, 0.8),
+    2, "Gauss2-C", "Gauss2_log_dens", c(N2weakcor.dist$mean, 0.8),
     mean = N2weakcor.dist$mean, cov = N2weakcor.dist$cov)
 
 results <- compare.samplers(

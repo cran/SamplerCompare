@@ -3,9 +3,11 @@
 // distributions.c contains C implementations of a two dimensional
 // Gaussian and Roberts and Rosenthal's cone distribution.
 
+#define USE_FC_LEN_T
+
 #include <R.h>
-#include <Rinternals.h>
 #include <R_ext/BLAS.h>
+#include <Rinternals.h>
 #include <math.h>
 
 #include "../inst/include/SamplerCompare.h"
@@ -25,26 +27,26 @@ log_density_t Gauss2_log_dens, cone_log_dens;
 //
 // It is only used in test code and is not exported to users.
 
-double Gauss2_log_dens(dist_t *dist, double *x,
-                       int compute_grad, double *grad) {
-  if (dist->ndim!=2)
+double Gauss2_log_dens(dist_t *dist, double *x, int compute_grad,
+                       double *grad) {
+  if (dist->ndim != 2)
     error("Gauss2_log_dens: dimension other than two (%d)", dist->ndim);
 
   double mu1 = REAL(dist->context)[0];
   double mu2 = REAL(dist->context)[1];
   double rho = REAL(dist->context)[2];
-  if (!(rho<=1) || !(rho>=-1))
+  if (!(rho <= 1) || !(rho >= -1))
     error("Gauss2_fdf: invalid correlation (%.6g)", rho);
-  double det = 1-rho*rho;
+  double det = 1 - rho * rho;
 
   double z0 = x[0] - mu1;
   double z1 = x[1] - mu2;
 
-  double y = -1.83787706640935 - 0.5 * log(det)
-    - 0.5 * (z0*z0 - 2 * rho * z0 * z1 + z1*z1) / det;
+  double y = -1.83787706640935 - 0.5 * log(det) -
+             0.5 * (z0 * z0 - 2 * rho * z0 * z1 + z1 * z1) / det;
   if (compute_grad) {
-    grad[0] = -1.0/det * z0 + rho / det * z1;
-    grad[1] = -1.0/det * z1 + rho / det * z0;
+    grad[0] = -1.0 / det * z0 + rho / det * z1;
+    grad[1] = -1.0 / det * z1 + rho / det * z0;
   }
   return y;
 }
@@ -52,13 +54,13 @@ double Gauss2_log_dens(dist_t *dist, double *x,
 // Log density for Roberts and Rosenthal's cone distribution.  See
 // ?make.cone.dist for more information.
 
-double cone_log_dens(dist_t *dist, double *x,
-                     int compute_grad, double *grad) {
+double cone_log_dens(dist_t *dist, double *x, int compute_grad, double *grad) {
   int one = 1;
   double y = -dnrm2_(&dist->ndim, x, &one);
   if (compute_grad) {
-    for (int i=0; i<dist->ndim; i++)
+    for (int i = 0; i < dist->ndim; i++) {
       grad[i] = -fabs(x[i]);
+    }
   }
-  return(y);
+  return y;
 }

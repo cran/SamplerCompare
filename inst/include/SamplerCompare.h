@@ -18,7 +18,7 @@
 
 struct dist_t_forward;
 
-typedef double log_density_t(struct dist_t_forward*, double*, int, double*);
+typedef double log_density_t(struct dist_t_forward *, double *, int, double *);
 
 typedef struct dist_t_forward {
   log_density_t *log_dens;

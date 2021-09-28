@@ -9,6 +9,8 @@
 // allocated, this is probably okay.  Fixing this would introduce more
 // complexity than it's worth.
 
+#define USE_FC_LEN_T
+
 #include <string.h>
 
 #include <R.h>
@@ -33,7 +35,9 @@ typedef struct {
 // generated from an envelope, and used to represent a piecewise
 // exponential distribution.
 
-typedef struct { double left, right, slope, icept, weight; } lineseg_t;
+typedef struct {
+  double left, right, slope, icept, weight;
+} lineseg_t;
 
 // These functions are documented before their definitions.
 

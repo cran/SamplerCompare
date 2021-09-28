@@ -62,5 +62,5 @@
 
 \references{
   Thompson, M. B. (2010).  Graphical comparison of MCMC performance.
-  \url{http://arxiv.org/abs/1011.4457}.
+  \url{https://arxiv.org/abs/1011.4457}.
 }

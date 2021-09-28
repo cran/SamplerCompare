@@ -4,9 +4,11 @@
 // for samplers and distributions.  See the vignette "R/C Glue in
 // SamplerCompare" for more information.
 
+#define USE_FC_LEN_T
+
 #include <R.h>
-#include <Rinternals.h>
 #include <R_ext/Rdynload.h>
+#include <Rinternals.h>
 
 #include "../inst/include/SamplerCompare.h"
 #include "init.h"
@@ -27,14 +29,14 @@ typedef struct {
 // a C function instead of an R function.
 
 typedef struct {
-  dist_t ds;        // the inner dist_t to be invoked
+  dist_t ds;  // the inner dist_t to be invoked
   int evals;
   int grads;
 } C_stub_context_t;
 
 static log_density_t C_log_density_stub_func, R_log_density_stub_func;
 static SEXP void_as_raw(void *p);
-static inline void *raw_as_void(SEXP raw_vec) { return *(void**)RAW(raw_vec); }
+static inline void *raw_as_void(SEXP raw_vec) { return *(void **)RAW(raw_vec); }
 
 // Use a sampler implemented in C to draw a sample from a distribution
 // defined in R.  The arguments are:
@@ -57,15 +59,16 @@ static inline void *raw_as_void(SEXP raw_vec) { return *(void**)RAW(raw_vec); }
 
 SEXP sampler_glue_R_dist(SEXP sampler, SEXP sampler_context, SEXP log_dens,
                          SEXP x0, SEXP sample_size, SEXP tuning, SEXP envir) {
-
   // Check parameters for validity and unpack some of them into C types.
 
-  if (!isEnvironment(envir))
+  if (!isEnvironment(envir)) {
     error("envir is not an environment.");
+  }
 
   int sample_size_int = asInteger(sample_size);
-  if (sample_size_int<1)
+  if (sample_size_int < 1) {
     error("sample size must be a positive integer.");
+  }
   int ndim = length(x0);
 
   double tuning_dbl = asReal(tuning);
@@ -73,22 +76,25 @@ SEXP sampler_glue_R_dist(SEXP sampler, SEXP sampler_context, SEXP log_dens,
 
   // Locate the sampler as a function pointer.
 
-  if (!isString(sampler))
+  if (!isString(sampler)) {
     error("sampler is not a character string.");
+  }
   sampler_t *sampler_fp =
-    (sampler_t*)R_FindSymbol(CHAR(STRING_ELT(sampler,0)), "", NULL);
-  if (sampler_fp==NULL)
-    error("Cannot locate symbol \"%s\".", CHAR(STRING_ELT(sampler,0)));
+      (sampler_t *)R_FindSymbol(CHAR(STRING_ELT(sampler, 0)), "", NULL);
+  if (sampler_fp == NULL) {
+    error("Cannot locate symbol \"%s\".", CHAR(STRING_ELT(sampler, 0)));
+  }
 
   // Create a stub for log_dens so that it looks like a C density
   // to the sampler.
 
-  R_stub_context_t stub_context =
-    { .log_dens=log_dens, .envir=envir, .evals=0, .grads=0 };
+  R_stub_context_t stub_context = {
+      .log_dens = log_dens, .envir = envir, .evals = 0, .grads = 0};
   SEXP raw_context;
   PROTECT(raw_context = void_as_raw(&stub_context));
-  dist_t stub_ds = { .log_dens=R_log_density_stub_func,
-                     .context=raw_context, .ndim=ndim };
+  dist_t stub_ds = {.log_dens = R_log_density_stub_func,
+                    .context = raw_context,
+                    .ndim = ndim};
 
   // Allocate a result matrix, set up the RNG, and call the sampler
   // to draw a sample.
@@ -96,8 +102,8 @@ SEXP sampler_glue_R_dist(SEXP sampler, SEXP sampler_context, SEXP log_dens,
   SEXP X_out;
   PROTECT(X_out = allocMatrix(REALSXP, sample_size_int, ndim));
   GetRNGstate();
-  sampler_fp(sampler_context, &stub_ds, x0_dbl, sample_size_int,
-             tuning_dbl, REAL(X_out));
+  sampler_fp(sampler_context, &stub_ds, x0_dbl, sample_size_int, tuning_dbl,
+             REAL(X_out));
   PutRNGstate();
 
   // Set up return value as an R object.
@@ -114,31 +120,31 @@ SEXP sampler_glue_R_dist(SEXP sampler, SEXP sampler_context, SEXP log_dens,
   setAttrib(ans, R_NamesSymbol, ans_names);
   UNPROTECT(4);
 
-  return(ans);
+  return ans;
 }
 
 // This function wraps an R log density function so that it exposes
 // the interface expected by a sampler_t and keeps track of the number
 // of times it is called.
 
-static double R_log_density_stub_func(dist_t *ds, double *x,
-                                      int compute_grad, double *grad) {
+static double R_log_density_stub_func(dist_t *ds, double *x, int compute_grad,
+                                      double *grad) {
   SEXP xsexp, fcall, result_sexp, compute_grad_sexp, result_names;
 
-  R_stub_context_t *stub_context = (R_stub_context_t*)raw_as_void(ds->context);
+  R_stub_context_t *stub_context = (R_stub_context_t *)raw_as_void(ds->context);
 
   // Allocate R variables for the arguments to the R log.density.and.grad
   // and call it.
 
   PROTECT(xsexp = allocVector(REALSXP, ds->ndim));
-  memmove(REAL(xsexp), x, sizeof(double)*ds->ndim);
+  memmove(REAL(xsexp), x, sizeof(double) * ds->ndim);
   PROTECT(compute_grad_sexp = allocVector(LGLSXP, 1));
-  LOGICAL(compute_grad_sexp)[0] = (compute_grad!=0);
+  LOGICAL(compute_grad_sexp)[0] = (compute_grad != 0);
   PROTECT(fcall = lang3(stub_context->log_dens, xsexp, compute_grad_sexp));
   PROTECT(result_sexp = eval(fcall, stub_context->envir));
 
   double log_dens = NAN;
-  int found_log_dens=0, found_grad=0;
+  int found_log_dens = 0, found_grad = 0;
 
   // Unpack the results from the log.density.and.grad into the
   // variable log_dens and (if appropriate) the memory pointed to by
@@ -149,13 +155,14 @@ static double R_log_density_stub_func(dist_t *ds, double *x,
   }
   PROTECT(result_names = getAttrib(result_sexp, R_NamesSymbol));
   for (int i = 0; i < length(result_sexp); i++) {
-    if (!strcmp(CHAR(STRING_ELT(result_names,i)), "log.density")) {
+    if (!strcmp(CHAR(STRING_ELT(result_names, i)), "log.density")) {
       log_dens = asReal(VECTOR_ELT(result_sexp, i));
       found_log_dens = 1;
     }
     if (compute_grad &&
-        !strcmp(CHAR(STRING_ELT(result_names,i)), "grad.log.density")) {
-      memmove(grad, REAL(VECTOR_ELT(result_sexp, i)), sizeof(double)*ds->ndim);
+        !strcmp(CHAR(STRING_ELT(result_names, i)), "grad.log.density")) {
+      memmove(grad, REAL(VECTOR_ELT(result_sexp, i)),
+              sizeof(double) * ds->ndim);
       found_grad = 1;
     }
   }
@@ -165,16 +172,19 @@ static double R_log_density_stub_func(dist_t *ds, double *x,
   // Throw an error if the log density did not return the appropriate
   // list elements.
 
-  if (!found_log_dens)
+  if (!found_log_dens) {
     error("log density did not return log.density element.");
-  if (!found_grad && compute_grad)
+  }
+  if (!found_grad && compute_grad) {
     error("log density did not return grad.log.density element.");
+  }
 
   // Increment the evaluation counters.
 
   stub_context->evals++;
-  if (compute_grad)
+  if (compute_grad) {
     stub_context->grads++;
+  }
 
   return log_dens;
 }
@@ -201,35 +211,38 @@ static double R_log_density_stub_func(dist_t *ds, double *x,
 //   grads  an integer indicating the number of times log density was
 //          called with a gradient requested
 
-SEXP sampler_glue_C_dist(
-    SEXP sampler_name, SEXP sampler_context, SEXP log_dens_name,
-    SEXP dist_context, SEXP x0, SEXP sample_size, SEXP tuning) {
-
+SEXP sampler_glue_C_dist(SEXP sampler_name, SEXP sampler_context,
+                         SEXP log_dens_name, SEXP dist_context, SEXP x0,
+                         SEXP sample_size, SEXP tuning) {
   // Locate symbol for sampler function.
 
-  const char *sampler_str = CHAR(STRING_ELT(sampler_name,0));
-  sampler_t *sampler_fp = (sampler_t*)R_FindSymbol(sampler_str, "", NULL);
-  if (sampler_fp==NULL)
+  const char *sampler_str = CHAR(STRING_ELT(sampler_name, 0));
+  sampler_t *sampler_fp = (sampler_t *)R_FindSymbol(sampler_str, "", NULL);
+  if (sampler_fp == NULL) {
     error("Cannot locate symbol \"%s\".", sampler_str);
+  }
 
   // Locate symbol for log density.
 
-  const char *log_dens_str = CHAR(STRING_ELT(log_dens_name,0));
+  const char *log_dens_str = CHAR(STRING_ELT(log_dens_name, 0));
   log_density_t *log_dens_fp =
-    (log_density_t*)R_FindSymbol(log_dens_str, "", NULL);
-  if (log_dens_fp==NULL)
+      (log_density_t *)R_FindSymbol(log_dens_str, "", NULL);
+  if (log_dens_fp == NULL) {
     error("Cannot locate symbol \"%s\".", log_dens_str);
+  }
 
   // Define a stub function to keep track of the number of function calls.
 
   int ndim = length(x0);
-  C_stub_context_t stub_context =
-    { .ds = { .log_dens=log_dens_fp, .ndim=ndim, .context=dist_context },
-      .evals=0, .grads=0 };
+  C_stub_context_t stub_context = {
+      .ds = {.log_dens = log_dens_fp, .ndim = ndim, .context = dist_context},
+      .evals = 0,
+      .grads = 0};
   SEXP raw_context;
   PROTECT(raw_context = void_as_raw(&stub_context));
-  dist_t stub_ds = { .log_dens=C_log_density_stub_func,
-                     .context=raw_context, .ndim=ndim };
+  dist_t stub_ds = {.log_dens = C_log_density_stub_func,
+                    .context = raw_context,
+                    .ndim = ndim};
 
   // Create a matrix to store the states in and call the sampler.
 
@@ -242,7 +255,7 @@ SEXP sampler_glue_C_dist(
 
   // Construct the result to return.
 
-  const char *result_names[] = { "X", "evals", "grads", "" };
+  const char *result_names[] = {"X", "evals", "grads", ""};
   SEXP result;
   PROTECT(result = mkNamed(VECSXP, result_names));
   SET_VECTOR_ELT(result, 0, X);
@@ -256,12 +269,11 @@ SEXP sampler_glue_C_dist(
 // count the number of times the log density is called.  Obeys the
 // calling convention of log_density_t.
 
-static double C_log_density_stub_func(dist_t *ds, double *x,
-                                      int compute_grad, double *grad) {
-  C_stub_context_t *stub_context = (C_stub_context_t*)raw_as_void(ds->context);
+static double C_log_density_stub_func(dist_t *ds, double *x, int compute_grad,
+                                      double *grad) {
+  C_stub_context_t *stub_context = (C_stub_context_t *)raw_as_void(ds->context);
   stub_context->evals++;
-  if (compute_grad)
-    stub_context->grads++;
+  if (compute_grad) stub_context->grads++;
   return stub_context->ds.log_dens(&stub_context->ds, x, compute_grad, grad);
 }
 
@@ -270,12 +282,14 @@ static double C_log_density_stub_func(dist_t *ds, double *x,
 SEXP raw_symbol(SEXP symbol_name) {
   // Find a function pointer for the requested symbol.
 
-  if (!isString(symbol_name) || length(symbol_name)!=1)
+  if (!isString(symbol_name) || length(symbol_name) != 1) {
     error("Invalid symbol_name.");
+  }
   const char *symbol_char = CHAR(STRING_ELT(symbol_name, 0));
   void *symbol = R_FindSymbol(symbol_char, "", NULL);
-  if (symbol==NULL)
+  if (symbol == NULL) {
     error("Could not locate symbol \"%s\".", symbol_char);
+  }
 
   // Copy the function pointer to a raw vector and return it.
 
@@ -288,8 +302,8 @@ SEXP raw_symbol(SEXP symbol_name) {
 
 static SEXP void_as_raw(void *p) {
   SEXP raw_vec;
-  PROTECT(raw_vec = allocVector(RAWSXP, sizeof(void*)));
-  *(void**)RAW(raw_vec) = p;
+  PROTECT(raw_vec = allocVector(RAWSXP, sizeof(void *)));
+  *(void **)RAW(raw_vec) = p;
   UNPROTECT(1);
   return raw_vec;
 }
@@ -316,25 +330,23 @@ static SEXP void_as_raw(void *p) {
 // it is a numeric vector with the same number of elements as x.
 
 SEXP R_invoked_C_glue(SEXP c_sym, SEXP context, SEXP x, SEXP compute_grad) {
-
   // Identify the problem dimension and extract a function pointer
   // for the log density.
 
   int ndim = length(x);
-  log_density_t *log_dens_fn = *(log_density_t**)RAW(c_sym);
-  dist_t ds = { .log_dens=log_dens_fn, .context=context, .ndim=ndim };
+  log_density_t *log_dens_fn = *(log_density_t **)RAW(c_sym);
+  dist_t ds = {.log_dens = log_dens_fn, .context = context, .ndim = ndim};
 
   if (*LOGICAL(compute_grad)) {
-
     // Allocate a vector for the gradient and call the log density.
 
     SEXP grad, result;
-    PROTECT( grad = allocVector(REALSXP, ndim) );
+    PROTECT(grad = allocVector(REALSXP, ndim));
     double y = log_dens_fn(&ds, REAL(x), 1, REAL(grad));
 
     // Store the log density and gradient in a list and return it.
 
-    const char *result_names[] = { "log.density", "grad.log.density", "" };
+    const char *result_names[] = {"log.density", "grad.log.density", ""};
     PROTECT(result = mkNamed(VECSXP, result_names));
     SET_VECTOR_ELT(result, 0, ScalarReal(y));
     SET_VECTOR_ELT(result, 1, grad);
@@ -343,7 +355,6 @@ SEXP R_invoked_C_glue(SEXP c_sym, SEXP context, SEXP x, SEXP compute_grad) {
     return result;
 
   } else {
-
     // Call the log density function.
 
     double y = log_dens_fn(&ds, REAL(x), 0, NULL);
@@ -351,7 +362,7 @@ SEXP R_invoked_C_glue(SEXP c_sym, SEXP context, SEXP x, SEXP compute_grad) {
     // Store the log density in a list and return it.
 
     SEXP result;
-    const char *result_names[] = { "log.density", "" };
+    const char *result_names[] = {"log.density", ""};
     PROTECT(result = mkNamed(VECSXP, result_names));
     SET_VECTOR_ELT(result, 0, ScalarReal(y));
     UNPROTECT(1);

@@ -5,7 +5,7 @@
 # Not currently used; draws n rows uniformly from the unit sphere in R^p.
 # Read http://en.wikipedia.org/wiki/Hypersphere for more.
 
-rsphere <- function(n,p) {
+rsphere <- function(n, p) {
   r <- runif(n) ^ (1 / p)
   x <- array(rnorm(n * p), c(n, p))
   x <- x / sqrt(rowSums(x ^ 2)) * r

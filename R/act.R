@@ -2,7 +2,7 @@
 
 # act.R contains functions related to the computation of the
 # autocorrelation time of a Markov chain.  See "Graphical Comparison
-# of MCMC Samplers" (http://arxiv.org/abs/1011.4457) for a discussion of
+# of MCMC Samplers" (https://arxiv.org/abs/1011.4457) for a discussion of
 # autocorrelation times and examples of how one might use them.
 
 # Computes the autocorrelation time (correlation length) of the
@@ -100,9 +100,9 @@ ar.act <- function(Y, true.mean = NULL) {
   # ar.act1.  Return the act, CI, and SE for the slowest-mixing
   # component.
 
-  acts <- sapply(1:ncol(Y), function(i) ar.act1(Y[, i] - mu[i]))
+  acts <- sapply(seq_len(ncol(Y)), function(i) ar.act1(Y[, i] - mu[i]))
   max.i <- which.max(unlist(acts["act", ]))
-  if (length(max.i) != 1 )   # happens if all ACTs are NA
+  if (length(max.i) != 1)   # happens if all ACTs are NA
     return(list(act = NA, act.025 = NA, act.975 = NA, se = NA, order = NA))
   else
     return(acts[, max.i])

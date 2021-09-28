@@ -3,7 +3,7 @@
 # This script checks ensures that some of the example distributions
 # have gradient functions that match their log density functions.
 
-library(SamplerCompare)
+library("SamplerCompare")
 
 dists <- list(N2weakcor.dist, N4poscor.dist, N4negcor.dist, schools.dist)
 
