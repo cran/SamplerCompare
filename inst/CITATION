@@ -2,18 +2,18 @@ citHeader("To cite SamplerCompare in publications use:")
 
 citEntry(entry = "Article",
   title        = "Introduction to {SamplerCompare}",
+  doi          = "10.18637/jss.v043.i12",
   author       = personList(as.person("Madeleine B. Thompson")),
   journal      = "Journal of Statistical Software",
   year         = "2011",
   volume       = "43",
   number       = "12",
   pages        = "1--10",
-  url          = "https://www.jstatsoft.org/article/view/v043i12",
+  url          = "https://doi.org/10.18637/jss.v043.i12",
 
   textVersion  =
   paste("Madeleine B. Thompson (2011).",
         "Introduction to SamplerCompare.",
         "Journal of Statistical Software, 43(12), 1-10.",
-        "URL https://www.jstatsoft.org/v43/i12/.")
+        "URL https://doi.org/10.18637/jss.v043.i12.")
 )
-

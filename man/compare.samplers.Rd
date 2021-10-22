@@ -127,7 +127,7 @@ and tuning parameters}
   University of Toronto Dept. of Statistics technical report no. 1010.
 
   Thompson, M. B. (2011), \dQuote{Introduction to SamplerCompare,}
-  Journal of Statistical Software 43(12):1-10.
+  Journal of Statistical Software 43(12):1-10, \doi{10.18637/jss.v043.i12}.
 }
 
 \seealso{
