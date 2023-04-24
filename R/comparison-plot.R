@@ -13,7 +13,7 @@ comparison.plot <- function(RS, xlab = NULL, ylab = NULL, base_size = 10, ...) {
 
   # Compute a reasonably-spaced set of tick marks.
 
-  x.breaks <- log.breaks(RSfinite$tuning, 10)
+  x.breaks <- log_breaks(RSfinite$tuning, 10)
 
   # Manually handle xlab and ylab so they can be overridden by caller.
 
@@ -53,11 +53,10 @@ comparison.plot <- function(RS, xlab = NULL, ylab = NULL, base_size = 10, ...) {
   return(p)
 }
 
-# Return an sequence of tick marks to be used on a log axis.  Used
-# to keep the automatic tick generation from spacing ticks too
-# closely; this only returns ticks on integer powers of base.
-
-log.breaks <- function(data, base) {
+# Return a sequence of tick marks to be used on a log axis.  Used to keep the
+# automatic tick generation from spacing ticks too closely; this only returns
+# ticks on integer powers of base.
+log_breaks <- function(data, base) {
   breaks <- base ^ seq(floor(min(log(data, base = base))),
                        ceiling(max(log(data, base = base))))
 }

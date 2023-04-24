@@ -25,7 +25,7 @@ void transition_sample(SEXP context, dist_t *ds, double *x0, int sample_size,
 double Gauss2_log_dens(dist_t *dist, double *x, int compute_grad, double *grad);
 double cone_log_dens(dist_t *dist, double *x, int compute_grad, double *grad);
 
-extern void dchud_();
-extern void dchdd_();
+extern void dchud_(void);
+extern void dchdd_(void);
 
 #endif /* SAMPLERCOMPARE_INIT_H */

@@ -6,6 +6,7 @@
 
 #define USE_FC_LEN_T
 
+#include <stdint.h>
 #include <R.h>
 #include <R_ext/Rdynload.h>
 #include <Rinternals.h>
@@ -286,7 +287,7 @@ SEXP raw_symbol(SEXP symbol_name) {
     error("Invalid symbol_name.");
   }
   const char *symbol_char = CHAR(STRING_ELT(symbol_name, 0));
-  void *symbol = R_FindSymbol(symbol_char, "", NULL);
+  void *symbol = (void*)(intptr_t)R_FindSymbol(symbol_char, "", NULL);
   if (symbol == NULL) {
     error("Could not locate symbol \"%s\".", symbol_char);
   }
